@@ -205,6 +205,38 @@ def update_post(post_id):
 
     return redirect(url_for("show_post", post_id=post_id))
 
+@app.route("/projects/download/<project_id>")
+def download_project(project_id):
+    return send_from_directory(
+        directory="projects",      # md dosyalarının olduğu klasör
+        path=f"{project_id}.md",
+        as_attachment=True
+    )
+
+@app.route("/projects/update/<project_id>", methods=["GET", "POST"])
+def update_project(project_id):
+
+    # SAYFAYI GÖSTER
+    if request.method == "GET":
+        return render_template("update_project.html", project_id=project_id)
+
+    # UPLOAD İŞLEMİ
+    key = request.form.get("key")
+    file = request.files.get("file")
+
+    if not key or not file:
+        abort(400)
+
+    if not bcrypt.checkpw(key.encode(), HASHED_PSW):
+        return "Key yanlış", 403
+
+    if not file.filename.endswith(".md"):
+        abort(400)
+
+    save_path = os.path.join(PROJECTS_DIR, f"{project_id}.md")
+    file.save(save_path)
+
+    return redirect(url_for("show_project", project_id=project_id))
 
 @app.route("/projects")
 def projects_page():
