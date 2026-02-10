@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory,abort
 
 import markdown2
 import os
@@ -171,6 +171,40 @@ def add_post():
         return redirect(url_for("posts_page"))
 
     return render_template("add_post.html")
+
+@app.route("/posts/download/<post_id>")
+def download_post(post_id):
+    return send_from_directory(
+        directory="posts",      # md dosyalarının olduğu klasör
+        path=f"{post_id}.md",
+        as_attachment=True
+    )
+
+@app.route("/posts/update/<post_id>", methods=["GET", "POST"])
+def update_post(post_id):
+
+    # SAYFAYI GÖSTER
+    if request.method == "GET":
+        return render_template("update_post.html", post_id=post_id)
+
+    # UPLOAD İŞLEMİ
+    key = request.form.get("key")
+    file = request.files.get("file")
+
+    if not key or not file:
+        abort(400)
+
+    if not bcrypt.checkpw(key.encode(), HASHED_PSW):
+        return "Key yanlış", 403
+
+    if not file.filename.endswith(".md"):
+        abort(400)
+
+    save_path = os.path.join(POSTS_DIR, f"{post_id}.md")
+    file.save(save_path)
+
+    return redirect(url_for("show_post", post_id=post_id))
+
 
 @app.route("/projects")
 def projects_page():

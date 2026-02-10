@@ -7,16 +7,34 @@
 {% endblock %}
 <!--İçerisine değişkenler alır: title, content. Bu değişkenlerle post sayfası üretir-->
 {% block content %}
-<div class="horizontal-layout" >
-    <div class="page-title-container"></div>
-    <h1 class="titleh1">{{post_id}}</h1>
+<div class="horizontal-layout" style="justify-content: space-between;" >
+    <div class="horizontal-layout">
+        <div class="page-title-container"></div>
+        <h1 class="titleh1">{{post_id}}</h1>
     </div>
+    <div class="horizontal-layout">
+        <a 
+            href="{{ url_for('download_post', post_id=post_id) }}" class="btn" download>
+            <i class="fa-solid fa-circle-arrow-down"></i>
+        </a>
+        <a
+        href="{{ url_for('update_post', post_id=post_id) }}"
+        class="btn"
+        >
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+        </a>
+    </div>
+
+
+
+
+</div>
 <div class="content-body">
     <div>
         {{ content|safe }}
     </div>
 </div>
-</div>
+
 
 
 {% endblock %}
