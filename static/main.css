@@ -1,0 +1,102 @@
+@import url("style.css");
+
+.single-button {
+  position: relative;
+  border-radius: 15px;
+  border: 6px solid var(--color-red-primary);
+  background-color: var(--color-snowwhite);
+  width: 80%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* iç div TAM oturur */
+.single-button div {
+  border-radius: 9px; /* border kadar düşür */
+  background-color: var(--color-red-primary);
+  width: 40%;
+  box-sizing: border-box;
+  transition: width 0.2s ease;
+}
+
+/* hover parent’tan tetiklenir */
+.single-button:hover div {
+  width: 90%;
+}
+
+.single-button div h3 {
+  margin: 0;    
+  padding: 10px;
+  font-size: x-large;
+  color: var(--color-gray-dark);
+}
+
+.chilling-horizontal {
+  transform-origin: left;
+  animation: scaleBar 5.0s ease-in-out infinite alternate;
+}
+a:nth-of-type(1) .chilling-horizontal { animation-delay: 0s; }
+a:nth-of-type(2) .chilling-horizontal { animation-delay: -1.5s; }
+a:nth-of-type(3) .chilling-horizontal { animation-delay: -0.5s; }
+a:nth-of-type(4) .chilling-horizontal { animation-delay: -1.8s; }
+a:nth-of-type(5) .chilling-horizontal { animation-delay: -0.8s; }
+
+@keyframes scaleBar {
+  from { width: 80%; transform: translateX(0px);}
+  to   { width: 90%; transform: translateX(10px);}
+}
+
+ /* alt taraf */
+.grid-container {
+    padding: 15px 25px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* kolon */
+    justify-items: center;      /* yatay ortalama */
+    row-gap: 30px;
+    padding-right: 30px;
+    padding-left: 30px;
+}
+.grid-column-left {
+  max-width: 40.0vw;
+  min-width: 25.0vw;
+}
+.grid-column-right {
+  max-width: 40.0vw;
+  min-width: 25.0vw;
+}
+
+/**/
+.title-tag {
+  background-color: var(--color-gray-dark);
+  border-radius: 15px;
+  color: var(--color-red-primary);
+  padding: 5px 10px;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: fit-content;
+}
+
+.vertical-seperator {
+  background-color: var(--color-gray-dark);
+  height: 2px;
+  width: 100%;
+}
+
+.example_content{
+    display: -webkit-box;
+    display: box; /* eski fallback */
+
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
+    -webkit-line-clamp: 26; /* WebKit */
+    line-clamp: 50;         /* Standard */
+
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.inner-item img {
+  width: auto;
+  max-height: 10.0vw;
+}

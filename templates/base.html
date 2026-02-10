@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SEVCYZD862"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-SEVCYZD862');
+    </script>
+     
+    <title>{% block title %}Site{% endblock %}</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Sayfaya özel CSS -->
+    {% block styles %}{% endblock %}
+    <!-- Fontlar-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div>
+        <div class="bg-slider">
+        <div class="bg step-1"></div>
+        <div class="bg step-2"></div>
+        <div class="bg step-3"></div>
+    </div>
+    <header class="header horizontal-layout" style="justify-content: space-between;">
+        <nav class="nav">
+            <a href="/" class="nav-link">Main Page</a>
+            <a href="/posts" class="nav-link">Posts</a>
+            <a href="/projects" class="nav-link">Projects</a>
+            <a href="/about" class="nav-link">About</a>
+
+        </nav>
+            <div>
+                <button class="color-btn" style="background-color: transparent;" onclick="setStep(0)">White</button>
+                <button class="color-btn" style="background-color: transparent;" onclick="setStep(1)">Reading</button>
+                <button class="color-btn" style="background-color: transparent;" onclick="setStep(2)">Colorful</button>     
+            </div>
+    </header>
+
+    <script>
+    function setStep(step) {
+    document.querySelector(".bg-slider")
+        .style.transform = `translateX(-${step * 100}vw)`;
+    }
+    </script>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>
+
+

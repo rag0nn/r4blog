@@ -1,0 +1,95 @@
+
+{% extends "base.html" %}
+<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.--->
+
+{% block title %}About{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='about.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="horizontal-layout" style="gap:5px">
+  <div class="page-title-container"></div>
+  <h1>About</h1>
+  
+</div>
+
+<div class="main-container" >
+  <div style="height: 10px;"></div>
+  <div class="grid-container">
+    <div class="div_card grid-column chilling"><!-- left group-->
+      <h2>Posts</h2>
+      <ul class="elements-ul">
+          {% for post in posts %}
+            <li class="element-li">
+              <a href="{{ url_for('show_post', post_id=post.slug) }}">
+                <h4>{{ post.title }}</h4>
+                <div>{{post.date}}</div>
+              </a>
+            </li>
+          {% endfor %}
+      </ul>
+    </div>
+
+    <div class="div_card grid-column chilling"><!-- middle group-->
+      <h2>Projects</h2>
+      <ul class="elements-ul">
+          {% for project in projects %}
+            <li class="element-li">
+              <a href="{{ url_for('show_project', project_id=project.slug) }}">
+                <h4>{{ project.title }}</h3>
+                <div>{{project.date}}</div>
+              </a>
+            </li>
+          {% endfor %}
+      </ul>
+    </div>
+
+    <div class="div_card grid-column chilling"> <!-- right group-->
+      <div class="horizontal-layout">
+
+        <img style="max-width: 80px; "
+          src="https://avatars.githubusercontent.com/u/126356802?v=4"
+          alt="Avatar"
+          class="avatar">
+
+        <h2>Rag0nn</h2>
+
+        <a href="https://github.com/rag0nn" class="link-button">GITHUB</a>
+      </div>
+      <div style="height: 10px;"></div>
+      <img 
+      src="https://camo.githubusercontent.com/5c14b0bbcee967dfd592f560194c1a4d9c6450d05c24837920bfbecbc87325f7/68747470733a2f2f6769746875622d726561646d652d73747265616b2d73746174732e6865726f6b756170702e636f6d2f3f757365723d726167306e6e267468656d653d6d6f6e6f6b616926686964655f626f726465723d66616c7365"
+      alt="stats">
+      <div style="height: 6px;"></div>
+      <div style="display: grid; gap: 10px;">
+        <div class="container-ability-categorie" data-level="5"><span>Python</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>Numpy</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>Tensorflow</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>Pandas</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>Matplotlib</span></div>
+        <div class="container-ability-categorie" data-level="4"><span>Opencv</span></div>
+        <div class="container-ability-categorie" data-level="2"><span>Pytorch</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>FastApi</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>Flask</span></div>
+        <div class="seperator"></div>
+        <div class="container-ability-categorie" data-level="4"><span>C++</span></div>
+        <div class="seperator"></div>
+        <div class="container-ability-categorie" data-level="4"><span>C#</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>ROS2</span></div>
+        <div class="container-ability-categorie" data-level="3"><span>RTABMAP &amp; ORBSLAM3</span></div>
+        <div class="seperator"></div>
+        <div class="container-ability-categorie" data-level="4"><span>Flutter</span></div>
+        <div class="seperator"></div>
+        <div class="container-ability-categorie" data-level="3"><span>MS Office</span></div>
+        <div class="seperator"></div>
+        <div class="container-ability-categorie" data-level="5"><span>Photoshop &amp; Canva &amp; Figma</span></div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

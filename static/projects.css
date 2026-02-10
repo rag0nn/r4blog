@@ -1,0 +1,67 @@
+@import url("style.css");
+.grid-container {
+    padding: 15px 25px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* kolon */
+    justify-items: center;      /* yatay ortalama */
+    row-gap: 30px;
+    padding-right: 30px;
+    padding-left: 30px;
+}
+.grid-column-left {
+  max-width: 60.0vw;
+  min-width: 55.0vw;
+}
+.grid-column-right {
+  max-width: 30vw;
+  min-width: 24vw;
+}
+
+.example_content{
+    padding: 5px 5px;
+    border-radius: 10px;
+    border: 3px solid var(--color-gray-dark);
+    display: -webkit-box;
+    display: box; /* eski fallback */
+
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
+    -webkit-line-clamp: 26; /* WebKit */
+    line-clamp: 26;         /* Standard */
+
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.search-container {
+  margin-bottom: 12px;
+  padding-left: 34px;
+
+}
+
+.search-container input {
+  max-width: 60.0vw;
+  min-width: 55.0vw;
+  padding: 15px 15px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-gray-dark);
+  font-size: 14px;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: var(--color-blue-steel);
+}
+
+.inner-title {
+  background-color: var(--color-gray-dark);
+  color: var(--color-red-primary);
+  padding: 10px 10px;
+  border-radius: 20px;
+}
+
+.inner-item img {
+  width: auto;
+  max-height: 10.0vw;
+}

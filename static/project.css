@@ -1,0 +1,75 @@
+@import url("style.css");
+
+.titleh1 {
+    font-size: xx-large;
+}
+
+h1 {
+    color: var(--color-black-text);
+    font-size: 30px;
+}
+h2 {
+    color: var(--color-black-text);
+    font-size: 26px;
+
+}
+h3 {
+    color: var(--color-black-text);
+    font-size: 22px;
+
+}
+h4 {
+    color: var(--color-black-text);
+    font-size: 20px;
+
+}
+h5 {
+    color: var(--color-black-text);
+    font-size: 18px;
+
+}
+p {
+    color: var(--color-black-text);
+    font-size: 18px;
+}
+ul {
+    color: var(--color-black-text);
+
+}
+li {
+    color: var(--color-black-text);
+    font-size: 16px;
+
+}
+code {
+    display: inline-block; 
+    color: var(--color-gray-dark);
+    background-color: var(--color-red-primary);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 20px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+img {
+    width: auto;
+    max-height: 25vw;
+    min-height: 5vw;
+}
+
+hr {
+    color: var(--color-gray-dark);
+}
+
+.content-body {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    width: 50.0vw;
+    margin: 0 auto;
+    padding-top: 60px;
+}
+
+.content-body div {
+    width: fit-content;
+}

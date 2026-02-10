@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Projects{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='add_project.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="horizontal-layout" style="gap:5px">
+  <div class="page-title-container"></div>
+  <h1>Add New Project</h1>
+</div>
+
+<form class="post-form" method="POST" enctype="multipart/form-data">
+    <input type="password" name="psw" placeholder="Key" required>
+    
+    <input type="text" name="title" placeholder="Project Title" required>
+
+    <label class="file-upload">
+        <input type="file" name="file" accept=".md" required hidden>
+        <span>📄 Choose markdown file</span>
+    </label>
+
+    <button type="submit">Submit</button>
+</form>
+
+{% endblock %}

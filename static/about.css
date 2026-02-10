@@ -1,0 +1,105 @@
+@import url("style.css");
+
+.main-container {
+    display: flex;
+    flex-direction: column;   /* dikey hizalama */
+    align-items: center;      /* yatay ortalama */
+    gap: 20px;                /* aralık */
+}
+
+.avatar {
+  width: 8vw;
+  max-width: 64px;
+  min-width: 32px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* tek kolon */
+    justify-items: center;      /* yatay ortalama */
+    row-gap: 20px;
+    padding-right: 40px;
+    padding-left: 40px;
+}
+
+.grid-column {
+  max-width: 33.333vw;
+  min-width: 24vw;
+}
+.grid-column img {
+  width: 100%;
+  height: auto;
+}
+
+/* Right Part*/
+.link-button {
+  background-color: var(--color-gray-dark);
+  border-radius: 20px;
+  color: var(--color-snowwhite);
+  padding: 10px;
+}
+
+.container-ability-categorie {
+  padding: 10px 10px;
+  font-weight: 700;
+  width: 40%;
+  border-radius: 12px;
+  border: 1px solid var(--color-gray-dark);
+  transition: width 0.6s ease, padding 0.9s ease;
+}
+
+/* Seviyelere göre renk ve boyut farklılıkları */
+.container-ability-categorie[data-level="1"]:hover  {
+  background-color: var(--color-ability-1);
+  width: 50%;
+  padding: 10px 15px;
+  border: 0px solid var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="2"]:hover  {
+  background-color: var(--color-ability-2);
+  width: 60%;
+  padding: 10px 15px;
+  border: 0px solid var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="3"]:hover  {
+  background-color: var(--color-ability-3);
+  width: 70%;
+  padding: 10px 15px;
+  border: 0px solid var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="4"]:hover  {
+  background-color:var(--color-ability-4);
+  width: 80%;
+  padding: 10px 15px;
+  border: 0px solid var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="5"]:hover  {
+  background-color: var(--color-ability-5);
+  width: 90%;
+  padding: 10px 15px;
+  border: 0px solid var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="1"]:hover span {
+  color: var(--color-snowwhite);;
+}
+.container-ability-categorie[data-level="2"]:hover span {
+  color: var(--color-snowwhite);;
+}
+.container-ability-categorie[data-level="3"]:hover span {
+  color: var(--color-snowwhite);;
+}
+.container-ability-categorie[data-level="4"]:hover span {
+  color: var(--color-snowwhite);
+}
+.container-ability-categorie[data-level="5"]:hover span {
+  color: var(--color-snowwhite);;
+}
+
+.seperator {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-gray-dark);
+}

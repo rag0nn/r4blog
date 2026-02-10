@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.--->
+{% block title %}Post{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='project.css') }}">
+{% endblock %}
+<!--İçerisine değişkenler alır: title, content. Bu değişkenlerle post sayfası üretir-->
+{% block content %}
+<div>
+    <div class="horizontal-layout" >
+        <div class="page-title-container"></div>
+        <h1 class="titleh1">{{ project_id}}</h1>
+        </div>
+    <div class="content-body">
+        <div>
+            {{ content|safe }}
+        </div>
+    </div>
+</div>
+{% endblock %}
