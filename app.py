@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-from werkzeug.utils import secure_filename
 
 import markdown2
 import os
@@ -7,7 +6,6 @@ from slugify import slugify
 from datetime import datetime
 import numpy
 import bcrypt
-import yaml
 
 app = Flask(__name__, template_folder='templates')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,17 +15,8 @@ PROJECTS_DIR = os.path.join(BASE_DIR, "projects")
 os.makedirs(POSTS_DIR, exist_ok=True)
 os.makedirs(PROJECTS_DIR, exist_ok=True)
 ALLOWED_EXTENSIONS = {"md"}
-HASHED_PSW = None
-# conf
-def get_conf():
-    try:
-        with open(f"{BASE_DIR}/config.yaml") as f:
-            config = yaml.safe_load(f)
-            HASHED_PSW = config["KEY"]
-    except:
-        print("Config Fail")
+HASHED_PSW = b"$2b$12$qz7nWTqfIdbrsw6MDZ10Ce/p7nspqKfZYu52CCiLlQ5ZNevXWEEhe"
 
-get_conf()
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS and filename
@@ -251,5 +240,4 @@ def add_project():
     return render_template("add_project.html")
 
 if __name__ == "__main__":
-    get_conf()
     app.run(debug=True)
