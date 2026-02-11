@@ -40,7 +40,7 @@ ul {
 li {
     color: var(--color-black-text);
     font-size: 16px;
-
+    padding: 2px 0px 2px 0px;
 }
 code {
     display: inline-block; 
