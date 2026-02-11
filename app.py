@@ -116,7 +116,7 @@ def get_post_content(index=None):
     with open(file_path, "r", encoding="utf-8") as f:
         md_content = f.read()
 
-    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks","tables"])
     return {
         "name": post["slug"],
         "category": post["category"],
@@ -163,7 +163,7 @@ def get_project_content(index=None):
     with open(file_path, "r", encoding="utf-8") as f:
         md_content = f.read()
 
-    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks","tables"])
     return {
         "name": project["slug"],
         "category": project["category"],
