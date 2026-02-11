@@ -73,7 +73,12 @@ hr {
 .content-body div {
     width: fit-content;
 }
-
+/* Mobil */
+@media (max-width: 768px) {
+    .content-body {
+        width: 90vw;
+    }
+}
 .btn {
   margin-left: auto;
   text-decoration: none;
