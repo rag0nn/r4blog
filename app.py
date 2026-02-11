@@ -17,7 +17,6 @@ if raw.startswith('b"') or raw.startswith("b'"):
     raw = raw[2:-1]
 
 HASHED_PSW = raw.encode("utf-8")
-print(HASHED_PSW)
 
 app = Flask(__name__, template_folder='templates')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
