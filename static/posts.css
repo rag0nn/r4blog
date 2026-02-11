@@ -1,37 +1,45 @@
 @import url("style.css");
+
 .grid-container {
-    padding: 15px 25px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* kolon */
-    justify-items: center;      /* yatay ortalama */
-    row-gap: 30px;
-    padding-right: 30px;
-    padding-left: 30px;
+  padding: 15px 25px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* kolon */
+  justify-items: center;
+  /* yatay ortalama */
+  row-gap: 30px;
+  padding-right: 30px;
+  padding-left: 30px;
 }
+
 .grid-column-left {
   max-width: 60.0vw;
   min-width: 55.0vw;
 }
+
 .grid-column-right {
   max-width: 30vw;
   min-width: 24vw;
 }
 
-.example_content{
-    padding: 5px 5px;
-    border-radius: 10px;
-    border: 3px solid var(--color-gray-dark);
-    display: -webkit-box;
-    display: box; /* eski fallback */
+.example_content {
+  padding: 5px 5px;
+  border-radius: 10px;
+  border: 3px solid var(--color-gray-dark);
+  display: -webkit-box;
+  display: box;
+  /* eski fallback */
 
-    -webkit-box-orient: vertical;
-    box-orient: vertical;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
 
-    -webkit-line-clamp: 26; /* WebKit */
-    line-clamp: 26;         /* Standard */
+  -webkit-line-clamp: 26;
+  /* WebKit */
+  line-clamp: 26;
+  /* Standard */
 
-    overflow: hidden;
-    word-break: break-word;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .search-container {
@@ -60,8 +68,36 @@
   padding: 10px 10px;
   border-radius: 20px;
 }
+
 .inner-item img {
   width: auto;
   max-height: 10.0vw;
 }
 
+/* ── Liste Item Kategori & Keyword Badge ────────────── */
+
+.item-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 4px 0;
+}
+
+.item-category-badge {
+  display: inline-block;
+  background-color: var(--color-gray-dark);
+  color: var(--color-snowwhite);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.item-keyword-badge {
+  display: inline-block;
+  background-color: var(--color-blue-steel);
+  color: var(--color-snowwhite);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}

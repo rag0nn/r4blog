@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.--->
+<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.-->
 {% block title %}Post{% endblock %}
 
 {% block styles %}
@@ -11,17 +11,16 @@
     <div class="horizontal-layout" style="justify-content: space-between;">
         <div class="horizontal-layout">
             <div class="page-title-container"></div>
-            <h1 class="titleh1">{{ project_id}}</h1>
+            <h1 class="titleh1">
+                <span class="category-badge">{{ category.lower() }}</span>
+                {{ project_id}}
+            </h1>
         </div>
         <div class="horizontal-layout">
-            <a 
-                href="{{ url_for('download_project', project_id=project_id) }}" class="btn" download>
+            <a href="{{ url_for('download_project', category=category, project_id=project_id) }}" class="btn" download>
                 <i class="fa-solid fa-circle-arrow-down"></i>
             </a>
-            <a
-            href="{{ url_for('update_project', project_id=project_id) }}"
-            class="btn"
-            >
+            <a href="{{ url_for('update_project', category=category, project_id=project_id) }}" class="btn">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
             </a>
         </div>
@@ -33,9 +32,16 @@
     </div>
 </div>
 
+<div style="height: 140px;">
+</div>
 <div class="footer">
-    <div >
-        {{created_time}}
+    <div class="footer-inner">
+        <div class="keyword-tags">
+            {% for kw in keywords %}
+            <span class="keyword-tag">{{ kw }}</span>
+            {% endfor %}
+        </div>
+        <span class="footer-date">{{created_time}}</span>
     </div>
 </div>
 

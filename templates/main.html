@@ -15,35 +15,35 @@
 </div>
 
 <div style="padding: 20px 20px;">
-  <a style="padding: 10px 10px;"href="/about">
+  <a style="padding: 10px 10px;" href="/about">
     <div class="single-button chilling-horizontal">
       <div>
         <h3>About</h3>
       </div>
     </div>
   </a>
-  <a style="padding: 10px 10px;"href="/posts">
+  <a style="padding: 10px 10px;" href="/posts">
     <div class="single-button chilling-horizontal">
       <div>
         <h3>Posts</h3>
       </div>
     </div>
   </a>
-  <a style="padding: 10px 10px;"href="/projects">
+  <a style="padding: 10px 10px;" href="/projects">
     <div class="single-button chilling-horizontal">
       <div>
         <h3>Projects</h3>
       </div>
     </div>
   </a>
-  <a style="padding: 10px 10px;"href="/posts/add">
+  <a style="padding: 10px 10px;" href="/posts/add">
     <div class="single-button chilling-horizontal">
       <div>
         <h3>Add Post</h3>
       </div>
     </div>
   </a>
-  <a style="padding: 10px 10px;"href="/projects/add">
+  <a style="padding: 10px 10px;" href="/projects/add">
     <div class="single-button chilling-horizontal">
       <div>
         <h3>Add Project</h3>
@@ -54,35 +54,50 @@
   <!-- Alt Bölüm-->
   <div class="grid-container">
     <div class="grid-column-left div_card">
-      <a href="{{ url_for('show_project', project_id=example_project.name) }}">
-      <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
-        <div></div>
-        <span class="title-tag" >Random Project</span></div>
-      <div class="horizontal-layout" style="justify-content: space-between; align-items: center; /* dikey hizalama */">
-        <h3>{{example_project.name}} </h3>
-        <span>{{ example_project.date }}</span>
-      </div>
-      <div class="vertical-seperator"></div>
-      <div class="example_content inner-item">
-        {{ example_project.example_content|safe }}</div>
-
+      {% if example_project and example_project is mapping %}
+      <a href="{{ url_for('show_project', category=example_project.category, project_id=example_project.name) }}">
+        <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
+          <div></div>
+          <span class="title-tag">Random Project</span>
+        </div>
+        <div class="horizontal-layout"
+          style="justify-content: space-between; align-items: center; /* dikey hizalama */">
+          <h3>{{example_project.name}} </h3>
+          <span>{{ example_project.date }}</span>
+        </div>
+        <div class="vertical-seperator"></div>
+        <div class="example_content inner-item">
+          {{ example_project.example_content|safe }}</div>
       </a>
+      {% else %}
+      <div class="horizontal-layout" style="justify-content: center;">
+        <h3>No projects yet</h3>
+      </div>
+      {% endif %}
     </div>
 
     <div class="grid-column-right div_card">
-      <a href="{{ url_for('show_post', post_id=example_post.name) }}">
-      <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
-        <div></div>
-        <span class="title-tag" >Random Post</span></div>
-      <div class="horizontal-layout" style="justify-content: space-between; align-items: center; /* dikey hizalama */">
-        <h3>{{example_post.name}} </h3>
-        <span>{{ example_post.date }}</span>
-      </div>
-      <div class="vertical-seperator"></div>
-      <div class="example_content inner-item">
-        {{ example_post.example_content|safe }}
-      </div>
+      {% if example_post and example_post is mapping %}
+      <a href="{{ url_for('show_post', category=example_post.category, post_id=example_post.name) }}">
+        <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
+          <div></div>
+          <span class="title-tag">Random Post</span>
+        </div>
+        <div class="horizontal-layout"
+          style="justify-content: space-between; align-items: center; /* dikey hizalama */">
+          <h3>{{example_post.name}} </h3>
+          <span>{{ example_post.date }}</span>
+        </div>
+        <div class="vertical-seperator"></div>
+        <div class="example_content inner-item">
+          {{ example_post.example_content|safe }}
+        </div>
       </a>
+      {% else %}
+      <div class="horizontal-layout" style="justify-content: center;">
+        <h3>No posts yet</h3>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

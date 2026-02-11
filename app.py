@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory,abort
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort, jsonify
 
 import markdown2
 import os
@@ -8,6 +8,7 @@ import numpy
 import bcrypt
 from dotenv import load_dotenv
 import platform
+
 # config
 load_dotenv()
 
@@ -32,76 +33,146 @@ ALLOWED_EXTENSIONS = {"md"}
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS and filename
 
+
+# ── Kategori Yardımcıları ──────────────────────────────────────
+
+def get_categories(base_dir):
+    """Bir dizindeki tüm kategori klasörlerini döndürür."""
+    categories = []
+    for name in os.listdir(base_dir):
+        full_path = os.path.join(base_dir, name)
+        if os.path.isdir(full_path):
+            categories.append(name)
+    categories.sort()
+    return categories
+
+
+def get_category_keywords(base_dir, category):
+    """Kategori config.txt'den anahtar kelimeleri okur."""
+    config_path = os.path.join(base_dir, category, "config.txt")
+    if not os.path.exists(config_path):
+        return []
+    with open(config_path, "r", encoding="utf-8") as f:
+        lines = f.read().strip().splitlines()
+    keywords = [line.strip() for line in lines if line.strip()]
+    return keywords
+
+
+def ensure_category_dir(base_dir, category, keywords_text=""):
+    """Kategori klasörünü ve config.txt'yi oluşturur (yoksa)."""
+    cat_dir = os.path.join(base_dir, category)
+    os.makedirs(cat_dir, exist_ok=True)
+
+    config_path = os.path.join(cat_dir, "config.txt")
+    if not os.path.exists(config_path):
+        with open(config_path, "w", encoding="utf-8") as f:
+            f.write(keywords_text.strip() + "\n")
+
+
+def find_item_category(base_dir, slug):
+    """Slug'a göre dosyanın hangi kategoride olduğunu bulur."""
+    for category in get_categories(base_dir):
+        file_path = os.path.join(base_dir, category, slug + ".md")
+        if os.path.exists(file_path):
+            return category
+    return None
+
+
+# ── Post Fonksiyonları ──────────────────────────────────────
+
 def get_post_names():
-    posts = [
-        {
-            "slug": os.path.splitext(f)[0],
-            "title": os.path.splitext(f)[0].replace("-", " ").title(),
-            "mtime": os.path.getmtime(os.path.join(POSTS_DIR, f))
-        }
-        for f in os.listdir(POSTS_DIR)
-        if f.endswith(".md")
-    ]
+    """Tüm kategorilerdeki postları listeler."""
+    posts = []
+    for category in get_categories(POSTS_DIR):
+        cat_dir = os.path.join(POSTS_DIR, category)
+        keywords = get_category_keywords(POSTS_DIR, category)
+        for f in os.listdir(cat_dir):
+            if not f.endswith(".md"):
+                continue
+            slug = os.path.splitext(f)[0]
+            file_path = os.path.join(cat_dir, f)
+            posts.append({
+                "slug": slug,
+                "title": slug.replace("-", " ").title(),
+                "category": category,
+                "keywords": keywords,
+                "mtime": os.path.getmtime(file_path),
+            })
     posts.sort(key=lambda x: x["mtime"], reverse=True)
-    # timestamp → readable date
     for p in posts:
         p["date"] = datetime.fromtimestamp(p["mtime"]).strftime("%d %B %Y %H:%M")
     return posts
-    
-def get_post_content(index:int=None):
+
+
+def get_post_content(index=None):
     posts = get_post_names()
     if not posts:
-        return "Any Posts Here",404
+        return "Any Posts Here", 404
     if index is None:
-        index = numpy.random.randint(0,len(posts))
-    name = f"{POSTS_DIR}/{posts[index]['slug']}.md"
-    
-    with open(name, "r", encoding="utf-8") as f:
+        index = numpy.random.randint(0, len(posts))
+    post = posts[index]
+    file_path = os.path.join(POSTS_DIR, post["category"], post["slug"] + ".md")
+
+    with open(file_path, "r", encoding="utf-8") as f:
         md_content = f.read()
-    
+
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
-    content = {
-        "name" : posts[index]['slug'],
-        "date" : posts[index]['date'],
-        "example_content": html_content
+    return {
+        "name": post["slug"],
+        "category": post["category"],
+        "date": post["date"],
+        "example_content": html_content,
     }
-    return content
-    
+
+
+# ── Project Fonksiyonları ──────────────────────────────────────
+
 def get_project_names():
-    projects = [
-        {
-            "slug": os.path.splitext(f)[0],
-            "title": os.path.splitext(f)[0].replace("-", " ").title(),
-            "mtime": os.path.getmtime(os.path.join(PROJECTS_DIR, f))
-        }
-        for f in os.listdir(PROJECTS_DIR)
-        if f.endswith(".md")
-    ]
+    """Tüm kategorilerdeki projeleri listeler."""
+    projects = []
+    for category in get_categories(PROJECTS_DIR):
+        cat_dir = os.path.join(PROJECTS_DIR, category)
+        keywords = get_category_keywords(PROJECTS_DIR, category)
+        for f in os.listdir(cat_dir):
+            if not f.endswith(".md"):
+                continue
+            slug = os.path.splitext(f)[0]
+            file_path = os.path.join(cat_dir, f)
+            projects.append({
+                "slug": slug,
+                "title": slug.replace("-", " ").title(),
+                "category": category,
+                "keywords": keywords,
+                "mtime": os.path.getmtime(file_path),
+            })
     projects.sort(key=lambda x: x["mtime"], reverse=True)
-    # timestamp → readable date
     for p in projects:
         p["date"] = datetime.fromtimestamp(p["mtime"]).strftime("%d %B %Y %H:%M")
-    
     return projects
 
-def get_project_content(index:int = None):
+
+def get_project_content(index=None):
     projects = get_project_names()
     if not projects:
-        return "Any Projects Here",404
+        return "Any Projects Here", 404
     if index is None:
-        index = numpy.random.randint(0,len(projects))
+        index = numpy.random.randint(0, len(projects))
+    project = projects[index]
+    file_path = os.path.join(PROJECTS_DIR, project["category"], project["slug"] + ".md")
 
-    name = f"{PROJECTS_DIR}/{projects[index]['slug']}.md"
-    with open(name, "r", encoding="utf-8") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         md_content = f.read()
-    
+
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
-    content = {
-        "name" : projects[index]['slug'],
-        "date" : projects[index]['date'],
-        "example_content": html_content
+    return {
+        "name": project["slug"],
+        "category": project["category"],
+        "date": project["date"],
+        "example_content": html_content,
     }
-    return content
+
+
+# ── Sayfalar ──────────────────────────────────────
 
 @app.route("/")
 def base_page():
@@ -109,11 +180,15 @@ def base_page():
     example_post = get_post_content()
     return render_template('main.html', example_post=example_post, example_project=example_project)
 
+
 @app.route("/about")
 def about_page():
     posts = get_post_names()
     projects = get_project_names()
     return render_template('about.html', posts=posts, projects=projects)
+
+
+# ── Posts ──────────────────────────────────────
 
 @app.route("/posts", methods=["GET", "POST"])
 def posts_page():
@@ -121,188 +196,134 @@ def posts_page():
     example_content = get_post_content(0)
     return render_template("posts.html", posts=posts, example_content=example_content)
 
-@app.route("/posts/<post_id>")
-def show_post(post_id):
-    post_file = f"{POSTS_DIR}/{post_id}.md"
+
+@app.route("/posts/<category>/<post_id>")
+def show_post(category, post_id):
+    post_file = os.path.join(POSTS_DIR, category, post_id + ".md")
     if not os.path.exists(post_file):
         return "Yazı bulunamadı", 404
-    
+
     with open(post_file, "r", encoding="utf-8") as f:
         md_content = f.read()
-        
+
     stat = os.stat(post_file)
-    if platform.system() == "Windows":
-        ts = stat.st_ctime
-    else:
-        ts = stat.st_mtime
+    ts = stat.st_ctime if platform.system() == "Windows" else stat.st_mtime
     created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
-    
+
+    keywords = get_category_keywords(POSTS_DIR, category)
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks", "tables"])
-    print(html_content)
-    variables = {
-        "content" : html_content,
-        "post_id" : post_id,
-        "created_time" : created_time
-    }
-    
-    return render_template('post.html', **variables)
+
+    return render_template('post.html',
+        content=html_content,
+        post_id=post_id,
+        category=category,
+        keywords=keywords,
+        created_time=created_time,
+    )
+
 
 @app.route("/posts/add", methods=["GET", "POST"])
 def add_post():
     if request.method == "POST":
-        psw   = request.form.get("psw")
+        psw = request.form.get("psw")
         title = request.form.get("title")
-        file  = request.files.get("file")
+        file = request.files.get("file")
+        category_select = request.form.get("category_select")
+        new_category = request.form.get("new_category")
+        new_keywords = request.form.get("new_keywords")
 
-        # ŞİFRE KONTROLÜ
+        # Şifre kontrolü
         if not psw:
             return "Key girilmedi", 400
-
         if not bcrypt.checkpw(psw.encode(), HASHED_PSW):
             return "Key yanlış", 403
 
-        # BAŞLIK KONTROLLERİ
+        # Başlık kontrolleri
         if not title:
             return "Başlık boş olamaz", 400
-        
         if title == "add":
             return "Başlık 'add' olamaz", 400
 
-        # DOSYA KONTROLLERİ
+        # Dosya kontrolleri
         if not file or file.filename == "":
             return "Dosya seçilmedi", 400
-
         if not allowed_file(file.filename):
             return "Sadece .md dosyası kabul edilir", 400
 
-        # 🔗 SLUG OLUŞTURMA
+        # Kategori belirleme
+        if category_select == "__new__" and new_category:
+            category = slugify(new_category)
+            keywords_text = new_keywords.strip() if new_keywords else "#" + category
+            ensure_category_dir(POSTS_DIR, category, keywords_text)
+        elif category_select:
+            category = category_select
+        else:
+            return "Kategori seçilmedi", 400
+
+        # Slug oluşturma
         slug = slugify(title)
         base_slug = slug
         i = 1
-        while os.path.exists(os.path.join(POSTS_DIR, slug + ".md")):
+        cat_dir = os.path.join(POSTS_DIR, category)
+        while os.path.exists(os.path.join(cat_dir, slug + ".md")):
             slug = f"{base_slug}-{i}"
             i += 1
 
-        filename = slug + ".md"
-        save_path = os.path.join(POSTS_DIR, filename)
-
+        save_path = os.path.join(cat_dir, slug + ".md")
         file.save(save_path)
-
         return redirect(url_for("posts_page"))
 
-    return render_template("add_post.html")
+    categories = get_categories(POSTS_DIR)
+    return render_template("add_post.html", categories=categories)
 
-@app.route("/posts/download/<post_id>")
-def download_post(post_id):
+
+@app.route("/posts/download/<category>/<post_id>")
+def download_post(category, post_id):
+    directory = os.path.join("posts", category)
     return send_from_directory(
-        directory="posts",      # md dosyalarının olduğu klasör
+        directory=directory,
         path=f"{post_id}.md",
-        as_attachment=True
+        as_attachment=True,
     )
 
-@app.route("/posts/update/<post_id>", methods=["GET", "POST"])
-def update_post(post_id):
+
+@app.route("/posts/update/<category>/<post_id>", methods=["GET", "POST"])
+def update_post(category, post_id):
     if request.method == "GET":
-        return render_template("update_post.html", post_id=post_id)
+        return render_template("update_post.html", post_id=post_id, category=category)
 
     key = request.form.get("key")
     action = request.form.get("action")
 
     if not key:
         abort(400)
-
-    # bcrypt kontrolü
-    if not bcrypt.checkpw(
-        key.encode("utf-8"),
-        os.getenv("HASHED_PSW").encode("utf-8")
-    ):
+    if not bcrypt.checkpw(key.encode("utf-8"), HASHED_PSW):
         return "Key yanlış", 403
 
-    post_path = os.path.join(POSTS_DIR, f"{post_id}.md")
+    post_path = os.path.join(POSTS_DIR, category, f"{post_id}.md")
 
-    # ---------- UPLOAD ----------
+    # Upload
     if action == "upload":
         file = request.files.get("file")
-
         if not file or not file.filename.endswith(".md"):
             abort(400)
-
         file.save(post_path)
         return redirect(url_for("posts_page"))
 
-    # ---------- DELETE ----------
+    # Delete
     if action == "delete":
         confirm_slug = request.form.get("confirm_slug")
-
         if confirm_slug != post_id:
             return "Slug eşleşmiyor", 403
-
         if not os.path.exists(post_path):
             abort(404)
-
         os.remove(post_path)
         return redirect(url_for("posts_page"))
 
     abort(400)
 
-@app.route("/projects/download/<project_id>")
-def download_project(project_id):
-    return send_from_directory(
-        directory="projects",      # md dosyalarının olduğu klasör
-        path=f"{project_id}.md",
-        as_attachment=True
-    )
 
-@app.route("/projects/update/<project_id>", methods=["GET", "POST"])
-def update_project(project_id):
-
-    # SAYFAYI GÖSTER
-    if request.method == "GET":
-        return render_template("update_project.html", project_id=project_id)
-
-    # ORTAK VERİLER
-    key = request.form.get("key")
-    action = request.form.get("action")
-
-    if not key or not action:
-        abort(400)
-
-    # AUTH
-    if not bcrypt.checkpw(key.encode("utf-8"), HASHED_PSW):
-        return "Key yanlış", 403
-
-    project_path = os.path.join(PROJECTS_DIR, f"{project_id}.md")
-
-    # ---------- UPLOAD ----------
-    if action == "upload":
-        file = request.files.get("file")
-
-        if not file or file.filename == "":
-            abort(400)
-
-        if not file.filename.endswith(".md"):
-            abort(400)
-
-        file.save(project_path)
-        return redirect(url_for("show_project", project_id=project_id))
-
-    # ---------- DELETE ----------
-    if action == "delete":
-        confirm_slug = request.form.get("confirm_slug")
-
-        if not confirm_slug:
-            abort(400)
-
-        if confirm_slug != project_id:
-            return "Slug eşleşmiyor", 403
-
-        if not os.path.exists(project_path):
-            abort(404)
-
-        os.remove(project_path)
-        return redirect(url_for("projects_page"))
-
-    abort(400)
+# ── Projects ──────────────────────────────────────
 
 @app.route("/projects")
 def projects_page():
@@ -310,74 +331,134 @@ def projects_page():
     example_content = get_project_content(0)
     return render_template("projects.html", projects=projects, example_content=example_content)
 
-@app.route("/projects/<project_id>")
-def show_project(project_id):
-    post_file = f"{PROJECTS_DIR}/{project_id}.md"
-    if not os.path.exists(post_file):
+
+@app.route("/projects/<category>/<project_id>")
+def show_project(category, project_id):
+    project_file = os.path.join(PROJECTS_DIR, category, project_id + ".md")
+    if not os.path.exists(project_file):
         return "Yazı bulunamadı", 404
-    
-    with open(post_file, "r", encoding="utf-8") as f:
+
+    with open(project_file, "r", encoding="utf-8") as f:
         md_content = f.read()
-    
-    stat = os.stat(post_file)
-    if platform.system() == "Windows":
-        ts = stat.st_ctime
-    else:
-        ts = stat.st_mtime
+
+    stat = os.stat(project_file)
+    ts = stat.st_ctime if platform.system() == "Windows" else stat.st_mtime
     created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
-    
+
+    keywords = get_category_keywords(PROJECTS_DIR, category)
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks", "tables"])
-    variables = {
-        "content" : html_content,
-        "project_id" : project_id,
-        "created_time" : created_time
-    }
-    
-    return render_template('project.html', **variables)
+
+    return render_template('project.html',
+        content=html_content,
+        project_id=project_id,
+        category=category,
+        keywords=keywords,
+        created_time=created_time,
+    )
+
 
 @app.route("/projects/add", methods=["GET", "POST"])
 def add_project():
     if request.method == "POST":
-        psw   = request.form.get("psw")
+        psw = request.form.get("psw")
         title = request.form.get("title")
         file = request.files.get("file")
+        category_select = request.form.get("category_select")
+        new_category = request.form.get("new_category")
+        new_keywords = request.form.get("new_keywords")
 
-        # ŞİFRE KONTROLÜ
+        # Şifre kontrolü
         if not psw:
             return "Key girilmedi", 400
-
         if not bcrypt.checkpw(psw.encode(), HASHED_PSW):
             return "Key yanlış", 403
 
         if not title:
             return "Başlık boş olamaz", 400
-        
         if title == "add":
             return "Başlık 'add' olamaz", 400
 
         if not file or file.filename == "":
             return "Dosya seçilmedi", 400
-
         if not allowed_file(file.filename):
             return "Sadece .md dosyası kabul edilir", 400
 
-        slug = slugify(title)
+        # Kategori belirleme
+        if category_select == "__new__" and new_category:
+            category = slugify(new_category)
+            keywords_text = new_keywords.strip() if new_keywords else "#" + category
+            ensure_category_dir(PROJECTS_DIR, category, keywords_text)
+        elif category_select:
+            category = category_select
+        else:
+            return "Kategori seçilmedi", 400
 
-        # slug çakışmasını önle
+        # Slug oluşturma
+        slug = slugify(title)
         base_slug = slug
         i = 1
-        while os.path.exists(os.path.join(PROJECTS_DIR, slug + ".md")):
+        cat_dir = os.path.join(PROJECTS_DIR, category)
+        while os.path.exists(os.path.join(cat_dir, slug + ".md")):
             slug = f"{base_slug}-{i}"
             i += 1
 
-        filename = slug + ".md"
-        save_path = os.path.join(PROJECTS_DIR, filename)
-
+        save_path = os.path.join(cat_dir, slug + ".md")
         file.save(save_path)
-
         return redirect(url_for("projects_page"))
 
-    return render_template("add_project.html")
+    categories = get_categories(PROJECTS_DIR)
+    return render_template("add_project.html", categories=categories)
+
+
+@app.route("/projects/download/<category>/<project_id>")
+def download_project(category, project_id):
+    directory = os.path.join("projects", category)
+    return send_from_directory(
+        directory=directory,
+        path=f"{project_id}.md",
+        as_attachment=True,
+    )
+
+
+@app.route("/projects/update/<category>/<project_id>", methods=["GET", "POST"])
+def update_project(category, project_id):
+    if request.method == "GET":
+        return render_template("update_project.html", project_id=project_id, category=category)
+
+    key = request.form.get("key")
+    action = request.form.get("action")
+
+    if not key or not action:
+        abort(400)
+    if not bcrypt.checkpw(key.encode("utf-8"), HASHED_PSW):
+        return "Key yanlış", 403
+
+    project_path = os.path.join(PROJECTS_DIR, category, f"{project_id}.md")
+
+    # Upload
+    if action == "upload":
+        file = request.files.get("file")
+        if not file or file.filename == "":
+            abort(400)
+        if not file.filename.endswith(".md"):
+            abort(400)
+        file.save(project_path)
+        return redirect(url_for("show_project", category=category, project_id=project_id))
+
+    # Delete
+    if action == "delete":
+        confirm_slug = request.form.get("confirm_slug")
+        if not confirm_slug:
+            abort(400)
+        if confirm_slug != project_id:
+            return "Slug eşleşmiyor", 403
+        if not os.path.exists(project_path):
+            abort(404)
+        os.remove(project_path)
+        return redirect(url_for("projects_page"))
+
+    abort(400)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

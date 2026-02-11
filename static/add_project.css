@@ -10,7 +10,7 @@
 
     background: #ffffff;
     border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 .post-form input[type="password"] {
@@ -24,7 +24,7 @@
 
 .post-form input[type="password"]:focus {
     border-color: #e63946;
-    box-shadow: 0 0 0 3px rgba(230,57,70,0.15);
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
 }
 
 .post-form input[type="text"] {
@@ -38,7 +38,7 @@
 
 .post-form input[type="text"]:focus {
     border-color: #e63946;
-    box-shadow: 0 0 0 3px rgba(230,57,70,0.15);
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
 }
 
 /* File upload */
@@ -54,7 +54,7 @@
 }
 
 .file-upload:hover {
-    background: rgba(230,57,70,0.08);
+    background: rgba(230, 57, 70, 0.08);
 }
 
 /* Submit button */
@@ -72,5 +72,42 @@
 
 .post-form button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(230,57,70,0.35);
+    box-shadow: 0 8px 18px rgba(230, 57, 70, 0.35);
+}
+
+/* ── Kategori Seçimi ────────────── */
+
+.post-form select {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    outline: none;
+    transition: 0.2s;
+    background: white;
+    cursor: pointer;
+}
+
+.post-form select:focus {
+    border-color: #e63946;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+}
+
+#newCategoryFields {
+    flex-direction: column;
+    gap: 10px;
+}
+
+#newCategoryFields input {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    outline: none;
+    transition: 0.2s;
+}
+
+#newCategoryFields input:focus {
+    border-color: #e63946;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
 }

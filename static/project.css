@@ -8,41 +8,49 @@ h1 {
     color: var(--color-black-text);
     font-size: 30px;
 }
+
 h2 {
     color: var(--color-black-text);
     font-size: 26px;
 
 }
+
 h3 {
     color: var(--color-black-text);
     font-size: 22px;
 
 }
+
 h4 {
     color: var(--color-black-text);
     font-size: 20px;
 
 }
+
 h5 {
     color: var(--color-black-text);
     font-size: 18px;
 
 }
+
 p {
     color: var(--color-black-text);
     font-size: 18px;
 }
+
 ul {
     color: var(--color-black-text);
 
 }
+
 li {
     color: var(--color-black-text);
     font-size: 16px;
     padding: 2px 0px 2px 0px;
 }
+
 code {
-    display: inline-block; 
+    display: inline-block;
     color: var(--color-gray-dark);
     background-color: var(--color-red-primary);
     padding: 10px 12px;
@@ -51,6 +59,7 @@ code {
     line-height: 1.4;
     white-space: pre-wrap;
 }
+
 img {
     width: auto;
     max-height: 25vw;
@@ -64,7 +73,7 @@ hr {
 .content-body {
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     width: 50.0vw;
     margin: 0 auto;
     padding-top: 60px;
@@ -73,29 +82,31 @@ hr {
 .content-body div {
     width: fit-content;
 }
+
 /* Mobil */
 @media (max-width: 768px) {
     .content-body {
         width: 90vw;
     }
 }
+
 .btn {
-  margin-left: auto;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 24px;
-  color: var(--color-gray-dark);
-  transition: 0.2s ease;
+    margin-left: auto;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--color-gray-dark);
+    transition: 0.2s ease;
 }
 
 .btn:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
+    opacity: 0.85;
+    transform: translateY(-1px);
 }
 
 .btn.disabled {
-  opacity: 0.4;
-  pointer-events: none;
+    opacity: 0.4;
+    pointer-events: none;
 }
 
 .footer {
@@ -103,6 +114,7 @@ hr {
     justify-content: end;
     padding: 40px 0px 20px 0px;
 }
+
 .footer div {
     width: fit-content;
     height: fit-content;
@@ -111,6 +123,53 @@ hr {
     border-radius: 12px 0 0 12px;
     padding: 5px 5px;
 }
+
 a {
     color: var(--color-blue-steel);
+}
+
+/* ── Kategori & Keyword Stilleri ────────────── */
+
+.category-badge {
+    display: inline-block;
+    background-color: var(--color-gray-dark);
+    color: var(--color-snowwhite);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--color-gray-dark);
+    color: var(--color-snowwhite);
+    border-radius: 12px 0 0 12px;
+    padding: 5px 10px;
+}
+
+.footer-date {
+    color: var(--color-snowwhite);
+    font-size: 14px;
+}
+
+.keyword-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.keyword-tag {
+    display: inline-block;
+    background-color: var(--color-blue-steel);
+    color: var(--color-snowwhite);
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 10px;
 }

@@ -1,67 +1,42 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Upload – {{ post_id }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='update_post.css') }}">
+  <meta charset="UTF-8">
+  <title>Upload – {{ post_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='update_post.css') }}">
 </head>
+
 <body>
 
-<form
-  class="post-form"
-  method="POST"
-  enctype="multipart/form-data">
+  <form class="post-form" method="POST" enctype="multipart/form-data">
     <h2>Update: {{ post_id }}</h2>
-    <input  class="form-input"
-      type="password"
-      name="key"
-      placeholder="Auth key"
-      required
-    >
+    <input class="form-input" type="password" name="key" placeholder="Auth key" required>
 
     <label class="file-upload">
-        Open markdown file
-        <input
-          type="file"
-          name="file"
-          accept=".md"
-          required
-        >
+      Open markdown file
+      <input type="file" name="file" accept=".md" required>
     </label>
 
     <button type="submit" name="action" value="upload">
       Update
     </button>
-</form>
+  </form>
 
-<form class="post-form" method="POST">
+  <form class="post-form" method="POST">
     <h2>Remove: {{ post_id }}</h2>
 
-    <input class="form-input"
-        type="password"
-        name="key"
-        placeholder="Auth key"
-        required
-    >
+    <input class="form-input" type="password" name="key" placeholder="Auth key" required>
 
-    <input  class="form-input"
-        type="text"
-        name="confirm_slug"
-        placeholder="Rewrite the slug"
-        required
-    >
+    <input class="form-input" type="text" name="confirm_slug" placeholder="Rewrite the slug" required>
 
-    <button
-        type="submit"
-        name="action"
-        value="delete"
-        class="delete-btn"
-    >
-        Delete Post
+    <button type="submit" name="action" value="delete" class="delete-btn">
+      Delete Post
     </button>
 
-</form>
+  </form>
 
 
 </body>
+
 </html>

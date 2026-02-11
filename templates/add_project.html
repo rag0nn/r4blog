@@ -15,16 +15,38 @@
 </div>
 
 <form class="post-form" method="POST" enctype="multipart/form-data">
-    <input type="password" name="psw" placeholder="Key" required>
-    
-    <input type="text" name="title" placeholder="Project Title" required>
+  <input type="password" name="psw" placeholder="Key" required>
 
-    <label class="file-upload">
-        <input type="file" name="file" accept=".md" required hidden>
-        <span>📄 Choose markdown file</span>
-    </label>
+  <input type="text" name="title" placeholder="Project Title" required>
 
-    <button type="submit">Submit</button>
+  <!-- Kategori Seçimi -->
+  <select name="category_select" id="categorySelect" onchange="toggleNewCategory()" required>
+    <option value="" disabled selected>Select Category</option>
+    {% for cat in categories %}
+    <option value="{{ cat }}">{{ cat.replace('-', ' ').title() }}</option>
+    {% endfor %}
+    <option value="__new__">+ New Category</option>
+  </select>
+
+  <div id="newCategoryFields" style="display:none;">
+    <input type="text" name="new_category" placeholder="New Category Name">
+    <input type="text" name="new_keywords" placeholder="Keywords: #flask #web-dev">
+  </div>
+
+  <label class="file-upload">
+    <input type="file" name="file" accept=".md" required hidden>
+    <span>📄 Choose markdown file</span>
+  </label>
+
+  <button type="submit">Submit</button>
 </form>
+
+<script>
+  function toggleNewCategory() {
+    const select = document.getElementById("categorySelect");
+    const fields = document.getElementById("newCategoryFields");
+    fields.style.display = select.value === "__new__" ? "flex" : "none";
+  }
+</script>
 
 {% endblock %}

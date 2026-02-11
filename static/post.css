@@ -103,7 +103,7 @@ hr {
 .footer {
     display: flex;
     justify-content: end;
-    padding: 40px 0px 20px 0px;
+    padding: 20px 0px 20px 0px;
 }
 .footer div {
     width: fit-content;
@@ -116,4 +116,50 @@ hr {
 
 a {
     color: var(--color-blue-steel);
+}
+
+/* ── Kategori & Keyword Stilleri ────────────── */
+
+.category-badge {
+    display: inline-block;
+    background-color: var(--color-gray-dark);
+    color: var(--color-snowwhite);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.footer-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--color-gray-dark);
+    color: var(--color-snowwhite);
+    border-radius: 12px 0 0 12px;
+    padding: 5px 10px;
+}
+
+.footer-date {
+    color: var(--color-snowwhite);
+    font-size: 14px;
+}
+
+.keyword-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.keyword-tag {
+    display: inline-block;
+    color: var(--color-blue-steel);
+    background-color: var(--color-snowwhite);
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 10px;
 }

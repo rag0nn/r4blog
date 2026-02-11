@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.--->
+<!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.-->
 
 {% block title %}Posts{% endblock %}
 
@@ -13,65 +13,66 @@
   <h1>Posts</h1>
 </div>
 <div class="search-container">
-  <input 
-    type="text" 
-    id="postSearch" 
-    placeholder="Search Post"
-    onkeyup="filterPosts()"
-  />
+  <input type="text" id="postSearch" placeholder="Search Post or #keyword" onkeyup="filterPosts()" />
 </div>
 
 <div class="grid-container">
-    <div class="div_card grid-column-left" style="padding: 25px 25px;"><!-- left group-->
-        <ul class="elements-ul" id="postsList">
-        {% for post in posts %}
-        <li class="element-li">
-            <a href="{{ url_for('show_post', post_id=post.slug) }}">
-            <h4 class="post-title">{{ post.title }}</h4>
-            <div>{{ post.date }}</div>
-            </a>
-        </li>
-        {% endfor %}
-        </ul>
-    </div>
-    <div class="div_card grid-column-right">
-        <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
-          <div></div>
-          <div class="inner-title">Last Post</div> 
-        </div>
-        <div class="horizontal-layout" style="justify-content: space-between; align-items: center; /* dikey hizalama */">
-            <h3>{{example_content.name}} </h3>
-            <span>{{ example_content.date }}</span>
+  <div class="div_card grid-column-left" style="padding: 25px 25px;"><!-- left group-->
+    <ul class="elements-ul" id="postsList">
+      {% for post in posts %}
+      <li class="element-li" data-keywords="{{ post.keywords | join(' ') | lower }}">
+        <a href="{{ url_for('show_post', category=post.category, post_id=post.slug) }}">
+          <h4 class="post-title">{{ post.title }}</h4>
+          <div class="item-meta">
+            <span class="item-category-badge">{{ post.category.lower() }}</span>
+            {% for kw in post.keywords %}
+            <span class="item-keyword-badge">{{ kw }}</span>
+            {% endfor %}
           </div>
-        <div style="height: 5px;"></div>
-        <div class="example_content inner-item">
-            {{ example_content.example_content|safe }}
-        </div>
+          <div>{{ post.date }}</div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="div_card grid-column-right">
+    <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
+      <div></div>
+      <div class="inner-title">Last Post</div>
     </div>
+    <div class="horizontal-layout" style="justify-content: space-between; align-items: center; /* dikey hizalama */">
+      <h3>{{example_content.name}} </h3>
+      <span>{{ example_content.date }}</span>
+    </div>
+    <div style="height: 5px;"></div>
+    <div class="example_content inner-item">
+      {{ example_content.example_content|safe }}
+    </div>
+  </div>
 </div>
 
 <!-- Post Searching-->
 <script>
-function filterPosts() {
-  const input = document.getElementById("postSearch");
-  const filter = input.value.toLowerCase();
-  const list = document.getElementById("postsList");
-  const items = list.getElementsByClassName("element-li");
+  function filterPosts() {
+    const input = document.getElementById("postSearch");
+    const filter = input.value.toLowerCase();
+    const list = document.getElementById("postsList");
+    const items = list.getElementsByClassName("element-li");
 
-  for (let i = 0; i < items.length; i++) {
-    const title = items[i]
-      .querySelector(".post-title")
-      .innerText
-      .toLowerCase();
+    for (let i = 0; i < items.length; i++) {
+      const title = items[i]
+        .querySelector(".post-title")
+        .innerText
+        .toLowerCase();
+      const keywords = items[i].getAttribute("data-keywords") || "";
 
-    if (title.includes(filter)) {
-      items[i].style.display = "";
-    } else {
-      items[i].style.display = "none";
+      if (title.includes(filter) || keywords.includes(filter)) {
+        items[i].style.display = "";
+      } else {
+        items[i].style.display = "none";
+      }
     }
   }
-}
 </script>
 
 {% endblock %}
-
