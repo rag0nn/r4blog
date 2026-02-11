@@ -7,6 +7,7 @@ from datetime import datetime
 import numpy
 import bcrypt
 from dotenv import load_dotenv
+import platform
 # config
 load_dotenv()
 
@@ -128,11 +129,19 @@ def show_post(post_id):
     
     with open(post_file, "r", encoding="utf-8") as f:
         md_content = f.read()
+        
+    stat = os.stat(post_file)
+    if platform.system() == "Windows":
+        ts = stat.st_ctime
+    else:
+        ts = stat.st_mtime
+    created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
     
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
     variables = {
         "content" : html_content,
-        "post_id" : post_id
+        "post_id" : post_id,
+        "created_time" : created_time
     }
     
     return render_template('post.html', **variables)
@@ -294,7 +303,6 @@ def update_project(project_id):
 
     abort(400)
 
-
 @app.route("/projects")
 def projects_page():
     projects = get_project_names()
@@ -310,10 +318,18 @@ def show_project(project_id):
     with open(post_file, "r", encoding="utf-8") as f:
         md_content = f.read()
     
+    stat = os.stat(post_file)
+    if platform.system() == "Windows":
+        ts = stat.st_ctime
+    else:
+        ts = stat.st_mtime
+    created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
+    
     html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
     variables = {
         "content" : html_content,
-        "project_id" : project_id
+        "project_id" : project_id,
+        "created_time" : created_time
     }
     
     return render_template('project.html', **variables)

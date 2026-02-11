@@ -97,3 +97,17 @@ hr {
   opacity: 0.4;
   pointer-events: none;
 }
+
+.footer {
+    display: flex;
+    justify-content: end;
+    padding: 40px 0px 20px 0px;
+}
+.footer div {
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--color-gray-dark);
+    color: var(--color-snowwhite);
+    border-radius: 12px 0 0 12px;
+    padding: 5px 5px;
+}
