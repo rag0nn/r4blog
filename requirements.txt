@@ -1,5 +1,6 @@
 Flask==3.1.2
 markdown2==2.5.4
 numpy==2.4.2
+python-dotenv==1.2.1
 python-slugify==8.0.4
-python_bcrypt==0.3.2
+bcrypt==0.3.2

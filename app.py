@@ -6,6 +6,18 @@ from slugify import slugify
 from datetime import datetime
 import numpy
 import bcrypt
+from dotenv import load_dotenv
+# config
+load_dotenv()
+
+raw = os.getenv("HASHED_PSW")
+
+# Eğer env yanlışlıkla b"..." olarak geldiyse temizle
+if raw.startswith('b"') or raw.startswith("b'"):
+    raw = raw[2:-1]
+
+HASHED_PSW = raw.encode("utf-8")
+print(HASHED_PSW)
 
 app = Flask(__name__, template_folder='templates')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +27,6 @@ PROJECTS_DIR = os.path.join(BASE_DIR, "projects")
 os.makedirs(POSTS_DIR, exist_ok=True)
 os.makedirs(PROJECTS_DIR, exist_ok=True)
 ALLOWED_EXTENSIONS = {"md"}
-HASHED_PSW = b"$2b$12$qz7nWTqfIdbrsw6MDZ10Ce/p7nspqKfZYu52CCiLlQ5ZNevXWEEhe"
 
 
 def allowed_file(filename):
