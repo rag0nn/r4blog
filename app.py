@@ -326,7 +326,7 @@ def show_project(project_id):
         ts = stat.st_mtime
     created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
     
-    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks", "tables"])
     variables = {
         "content" : html_content,
         "project_id" : project_id,
