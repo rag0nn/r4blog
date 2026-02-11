@@ -181,6 +181,6 @@ th, td {
 }
 
 th {
-  background: var(--color-reading-1);
+  background: var(--color-blue-light);
   color: var(--color-gray-dark);
 }
