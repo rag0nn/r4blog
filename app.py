@@ -193,28 +193,48 @@ def download_post(post_id):
 
 @app.route("/posts/update/<post_id>", methods=["GET", "POST"])
 def update_post(post_id):
-
-    # SAYFAYI GÖSTER
     if request.method == "GET":
         return render_template("update_post.html", post_id=post_id)
 
-    # UPLOAD İŞLEMİ
     key = request.form.get("key")
-    file = request.files.get("file")
+    action = request.form.get("action")
 
-    if not key or not file:
+    if not key:
         abort(400)
 
-    if not bcrypt.checkpw(key.encode(), HASHED_PSW):
+    # bcrypt kontrolü
+    if not bcrypt.checkpw(
+        key.encode("utf-8"),
+        os.getenv("HASHED_PSW").encode("utf-8")
+    ):
         return "Key yanlış", 403
 
-    if not file.filename.endswith(".md"):
-        abort(400)
+    post_path = os.path.join(POSTS_DIR, f"{post_id}.md")
 
-    save_path = os.path.join(POSTS_DIR, f"{post_id}.md")
-    file.save(save_path)
+    # ---------- UPLOAD ----------
+    if action == "upload":
+        file = request.files.get("file")
 
-    return redirect(url_for("show_post", post_id=post_id))
+        if not file or not file.filename.endswith(".md"):
+            abort(400)
+
+        file.save(post_path)
+        return redirect(url_for("posts_page"))
+
+    # ---------- DELETE ----------
+    if action == "delete":
+        confirm_slug = request.form.get("confirm_slug")
+
+        if confirm_slug != post_id:
+            return "Slug eşleşmiyor", 403
+
+        if not os.path.exists(post_path):
+            abort(404)
+
+        os.remove(post_path)
+        return redirect(url_for("posts_page"))
+
+    abort(400)
 
 @app.route("/projects/download/<project_id>")
 def download_project(project_id):
@@ -231,23 +251,50 @@ def update_project(project_id):
     if request.method == "GET":
         return render_template("update_project.html", project_id=project_id)
 
-    # UPLOAD İŞLEMİ
+    # ORTAK VERİLER
     key = request.form.get("key")
-    file = request.files.get("file")
+    action = request.form.get("action")
 
-    if not key or not file:
+    if not key or not action:
         abort(400)
 
-    if not bcrypt.checkpw(key.encode(), HASHED_PSW):
+    # AUTH
+    if not bcrypt.checkpw(key.encode("utf-8"), HASHED_PSW):
         return "Key yanlış", 403
 
-    if not file.filename.endswith(".md"):
-        abort(400)
+    project_path = os.path.join(PROJECTS_DIR, f"{project_id}.md")
 
-    save_path = os.path.join(PROJECTS_DIR, f"{project_id}.md")
-    file.save(save_path)
+    # ---------- UPLOAD ----------
+    if action == "upload":
+        file = request.files.get("file")
 
-    return redirect(url_for("show_project", project_id=project_id))
+        if not file or file.filename == "":
+            abort(400)
+
+        if not file.filename.endswith(".md"):
+            abort(400)
+
+        file.save(project_path)
+        return redirect(url_for("show_project", project_id=project_id))
+
+    # ---------- DELETE ----------
+    if action == "delete":
+        confirm_slug = request.form.get("confirm_slug")
+
+        if not confirm_slug:
+            abort(400)
+
+        if confirm_slug != project_id:
+            return "Slug eşleşmiyor", 403
+
+        if not os.path.exists(project_path):
+            abort(404)
+
+        os.remove(project_path)
+        return redirect(url_for("projects_page"))
+
+    abort(400)
+
 
 @app.route("/projects")
 def projects_page():

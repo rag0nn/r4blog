@@ -7,33 +7,33 @@
 </head>
 <body>
 
-<form
-  class="post-form"
-  method="POST"
-  enctype="multipart/form-data"
->
-    <h2>Update: {{ project_id }}</h2>
+<form method="POST" enctype="multipart/form-data" class="post-form">
+  <h2>Update: {{ project_id }}</h2>
 
-    <input
-      type="password"
-      name="key"
-      placeholder="Auth key"
-      required
-    >
+  <input class="form-input" type="password" name="key" placeholder="Auth key" required>
 
-    <label class="file-upload">
-        Markdown dosyası seç
-        <input
-          type="file"
-          name="file"
-          accept=".md"
-          required
-          hidden
-        >
-    </label>
+  <label class="file-upload">
+      Open markdown file
+      <input type="file" name="file" accept=".md" required>
+  </label>
 
-    <button type="submit">Yükle</button>
+  <button type="submit" name="action" value="upload">
+      Upload
+  </button>
 </form>
+
+<form method="POST" class="post-form">
+    <h2>Remove: {{ project_id }}</h2>
+
+    <input class="form-input" type="password" name="key" placeholder="Auth key" required>
+
+    <input class="form-input" type="text" name="confirm_slug" placeholder="Rewrite the slug" required>
+
+    <button type="submit" name="action" value="delete" class="delete-btn">
+        Delete Project
+    </button>
+</form>
+
 
 
 </body>

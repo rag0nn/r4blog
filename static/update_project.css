@@ -1,3 +1,4 @@
+@import url("style.css");
 .post-form {
     max-width: 420px;
     margin: 40px auto;
@@ -11,7 +12,7 @@
     box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
-.post-form input[type="password"] {
+.post-form .form-input {
     padding: 14px;
     font-size: 15px;
     border-radius: 10px;
@@ -20,7 +21,7 @@
     transition: 0.2s;
 }
 
-.post-form input[type="password"]:focus {
+.post-form .form-input:focus {
     border-color: #e63946;
     box-shadow: 0 0 0 3px rgba(230,57,70,0.15);
 }
@@ -55,4 +56,23 @@
 .post-form button:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(230,57,70,0.35);
+}
+
+
+.delete-btn {
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #333;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #111;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.35);
 }
