@@ -137,7 +137,8 @@ def show_post(post_id):
         ts = stat.st_mtime
     created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
     
-    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks"])
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks", "tables"])
+    print(html_content)
     variables = {
         "content" : html_content,
         "post_id" : post_id,
