@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 <!-- Base.html dosyasını extend eder ve sonrasında bu sayfanın özelliklerini gösterir.-->
-{% block title %}Post{% endblock %}
+{% block title %}{{project_id}}{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='project.css') }}">
