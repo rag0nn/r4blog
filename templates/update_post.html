@@ -24,6 +24,20 @@
   </form>
 
   <form class="post-form" method="POST">
+    <h2>Edit Content</h2>
+    <input class="form-input" type="password" name="key" placeholder="Auth key" required>
+
+    <label class="file-upload">
+      <textarea name="content"
+        style="width: 100%; height: 400px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace;">{{ content }}</textarea>
+    </label>
+
+    <button type="submit" name="action" value="save">
+      Save
+    </button>
+  </form>
+
+  <form class="post-form" method="POST">
     <h2>Remove: {{ post_id }}</h2>
 
     <input class="form-input" type="password" name="key" placeholder="Auth key" required>

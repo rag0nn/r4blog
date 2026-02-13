@@ -289,8 +289,14 @@ def download_post(category, post_id):
 
 @app.route("/posts/update/<category>/<post_id>", methods=["GET", "POST"])
 def update_post(category, post_id):
+    post_path = os.path.join(POSTS_DIR, category, f"{post_id}.md")
+
     if request.method == "GET":
-        return render_template("update_post.html", post_id=post_id, category=category)
+        if not os.path.exists(post_path):
+            abort(404)
+        with open(post_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return render_template("update_post.html", post_id=post_id, category=category, content=content)
 
     key = request.form.get("key")
     action = request.form.get("action")
@@ -302,7 +308,18 @@ def update_post(category, post_id):
 
     post_path = os.path.join(POSTS_DIR, category, f"{post_id}.md")
 
-    # Upload
+    # Save (New action)
+    if action == "save":
+        content = request.form.get("content")
+        if content is None:
+            abort(400)
+        # Dosya içeriğini güncelle (overwrite)
+        with open(post_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        # Kaydettikten sonra postu görüntülemeye git (veya tekrar edit sayfasına)
+        return redirect(url_for("show_post", category=category, post_id=post_id))
+
+    # Upload (Eski yöntem, isterseniz kaldırabilirsiniz veya alternatif olarak tutabilirsiniz)
     if action == "upload":
         file = request.files.get("file")
         if not file or not file.filename.endswith(".md"):
@@ -422,8 +439,14 @@ def download_project(category, project_id):
 
 @app.route("/projects/update/<category>/<project_id>", methods=["GET", "POST"])
 def update_project(category, project_id):
+    project_path = os.path.join(PROJECTS_DIR, category, f"{project_id}.md")
+
     if request.method == "GET":
-        return render_template("update_project.html", project_id=project_id, category=category)
+        if not os.path.exists(project_path):
+            abort(404)
+        with open(project_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return render_template("update_project.html", project_id=project_id, category=category, content=content)
 
     key = request.form.get("key")
     action = request.form.get("action")
@@ -434,6 +457,15 @@ def update_project(category, project_id):
         return "Key yanlış", 403
 
     project_path = os.path.join(PROJECTS_DIR, category, f"{project_id}.md")
+
+    # Save (New action)
+    if action == "save":
+        content = request.form.get("content")
+        if content is None:
+            abort(400)
+        with open(project_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return redirect(url_for("show_project", category=category, project_id=project_id))
 
     # Upload
     if action == "upload":
