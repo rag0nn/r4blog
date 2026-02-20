@@ -50,6 +50,13 @@
       </div>
     </div>
   </a>
+  <a style="padding: 10px 10px;" href="/notes/add">
+    <div class="single-button chilling-horizontal">
+      <div>
+        <h3>Add Note</h3>
+      </div>
+    </div>
+  </a>
 
   <!-- Alt Bölüm-->
   <div class="grid-container">
@@ -96,6 +103,32 @@
       {% else %}
       <div class="horizontal-layout" style="justify-content: center;">
         <h3>No posts yet</h3>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="grid-container" style="margin-top: 20px;">
+    <div class="grid-column-left div_card" style="grid-column: span 2;">
+      {% if example_note and example_note is mapping %}
+      <a href="{{ url_for('show_note', category=example_note.category, note_id=example_note.name) }}">
+        <div class="horizontal-layout" style="justify-content: space-between;align-items: center;">
+          <div></div>
+          <span class="title-tag">Random Note</span>
+        </div>
+        <div class="horizontal-layout"
+          style="justify-content: space-between; align-items: center; /* dikey hizalama */">
+          <h3>{{example_note.name}} </h3>
+          <span>{{ example_note.date }}</span>
+        </div>
+        <div class="vertical-seperator"></div>
+        <div class="example_content inner-item">
+          {{ example_note.example_content|safe }}
+        </div>
+      </a>
+      {% else %}
+      <div class="horizontal-layout" style="justify-content: center;">
+        <h3>No notes yet</h3>
       </div>
       {% endif %}
     </div>
