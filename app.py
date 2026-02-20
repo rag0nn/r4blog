@@ -24,9 +24,11 @@ app = Flask(__name__, template_folder='templates')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 POSTS_DIR = os.path.join(BASE_DIR, "posts")
 PROJECTS_DIR = os.path.join(BASE_DIR, "projects")
+NOTES_DIR = os.path.join(BASE_DIR, "notes")
 
 os.makedirs(POSTS_DIR, exist_ok=True)
 os.makedirs(PROJECTS_DIR, exist_ok=True)
+os.makedirs(NOTES_DIR, exist_ok=True)
 ALLOWED_EXTENSIONS = {"md"}
 
 
@@ -171,6 +173,52 @@ def get_project_content(index=None):
         "example_content": html_content,
     }
 
+# ── Note Fonksiyonları ──────────────────────────────────────
+
+def get_note_names():
+    """Tüm kategorilerdeki notları listeler."""
+    notes = []
+    for category in get_categories(NOTES_DIR):
+        cat_dir = os.path.join(NOTES_DIR, category)
+        keywords = get_category_keywords(NOTES_DIR, category)
+        for f in os.listdir(cat_dir):
+            if not f.endswith(".md"):
+                continue
+            slug = os.path.splitext(f)[0]
+            file_path = os.path.join(cat_dir, f)
+            notes.append({
+                "slug": slug,
+                "title": slug.replace("-", " ").title(),
+                "category": category,
+                "keywords": keywords,
+                "mtime": os.path.getmtime(file_path),
+            })
+    notes.sort(key=lambda x: x["mtime"], reverse=True)
+    for p in notes:
+        p["date"] = datetime.fromtimestamp(p["mtime"]).strftime("%d %B %Y %H:%M")
+    return notes
+
+
+def get_note_content(index=None):
+    notes = get_note_names()
+    if not notes:
+        return "Any Notes Here", 404
+    if index is None:
+        index = numpy.random.randint(0, len(notes))
+    note = notes[index]
+    file_path = os.path.join(NOTES_DIR, note["category"], note["slug"] + ".md")
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        md_content = f.read()
+
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks","tables"])
+    return {
+        "name": note["slug"],
+        "category": note["category"],
+        "date": note["date"],
+        "example_content": html_content,
+    }
+
 
 # ── Sayfalar ──────────────────────────────────────
 
@@ -178,7 +226,8 @@ def get_project_content(index=None):
 def base_page():
     example_project = get_project_content()
     example_post = get_post_content()
-    return render_template('main.html', example_post=example_post, example_project=example_project)
+    example_note = get_note_content()
+    return render_template('main.html', example_post=example_post, example_project=example_project, example_note=example_note)
 
 
 @app.route("/about")
@@ -488,6 +537,158 @@ def update_project(category, project_id):
             abort(404)
         os.remove(project_path)
         return redirect(url_for("projects_page"))
+
+    abort(400)
+
+
+# ── Notes ──────────────────────────────────────
+
+@app.route("/notes")
+def notes_page():
+    notes = get_note_names()
+    example_content = get_note_content(0)
+    return render_template("notes.html", notes=notes, example_content=example_content)
+
+
+@app.route("/notes/<category>/<note_id>")
+def show_note(category, note_id):
+    note_file = os.path.join(NOTES_DIR, category, note_id + ".md")
+    if not os.path.exists(note_file):
+        return "Not bulunamadı", 404
+
+    with open(note_file, "r", encoding="utf-8") as f:
+        md_content = f.read()
+
+    stat = os.stat(note_file)
+    ts = stat.st_ctime if platform.system() == "Windows" else stat.st_mtime
+    created_time = datetime.fromtimestamp(ts).strftime("%Y %m %d")
+
+    keywords = get_category_keywords(NOTES_DIR, category)
+    html_content = markdown2.markdown(md_content, extras=["fenced-code-blocks", "tables"])
+
+    return render_template('note.html',
+        content=html_content,
+        note_id=note_id,
+        category=category,
+        keywords=keywords,
+        created_time=created_time,
+    )
+
+
+@app.route("/notes/add", methods=["GET", "POST"])
+def add_note():
+    if request.method == "POST":
+        psw = request.form.get("psw")
+        title = request.form.get("title")
+        file = request.files.get("file")
+        category_select = request.form.get("category_select")
+        new_category = request.form.get("new_category")
+        new_keywords = request.form.get("new_keywords")
+
+        # Şifre kontrolü
+        if not psw:
+            return "Key girilmedi", 400
+        if not bcrypt.checkpw(psw.encode(), HASHED_PSW):
+            return "Key yanlış", 403
+
+        if not title:
+            return "Başlık boş olamaz", 400
+        if title == "add":
+            return "Başlık 'add' olamaz", 400
+
+        if not file or file.filename == "":
+            return "Dosya seçilmedi", 400
+        if not allowed_file(file.filename):
+            return "Sadece .md dosyası kabul edilir", 400
+
+        # Kategori belirleme
+        if category_select == "__new__" and new_category:
+            category = slugify(new_category)
+            keywords_text = new_keywords.strip() if new_keywords else "#" + category
+            ensure_category_dir(NOTES_DIR, category, keywords_text)
+        elif category_select:
+            category = category_select
+        else:
+            return "Kategori seçilmedi", 400
+
+        # Slug oluşturma
+        slug = slugify(title)
+        base_slug = slug
+        i = 1
+        cat_dir = os.path.join(NOTES_DIR, category)
+        while os.path.exists(os.path.join(cat_dir, slug + ".md")):
+            slug = f"{base_slug}-{i}"
+            i += 1
+
+        save_path = os.path.join(cat_dir, slug + ".md")
+        file.save(save_path)
+        return redirect(url_for("notes_page"))
+
+    categories = get_categories(NOTES_DIR)
+    return render_template("add_note.html", categories=categories)
+
+
+@app.route("/notes/download/<category>/<note_id>")
+def download_note(category, note_id):
+    directory = os.path.join("notes", category)
+    return send_from_directory(
+        directory=directory,
+        path=f"{note_id}.md",
+        as_attachment=True,
+    )
+
+
+@app.route("/notes/update/<category>/<note_id>", methods=["GET", "POST"])
+def update_note(category, note_id):
+    note_path = os.path.join(NOTES_DIR, category, f"{note_id}.md")
+
+    if request.method == "GET":
+        if not os.path.exists(note_path):
+            abort(404)
+        with open(note_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return render_template("update_note.html", note_id=note_id, category=category, content=content)
+
+    key = request.form.get("key")
+    action = request.form.get("action")
+
+    if not key or not action:
+        abort(400)
+    if not bcrypt.checkpw(key.encode("utf-8"), HASHED_PSW):
+        return "Key yanlış", 403
+
+    note_path = os.path.join(NOTES_DIR, category, f"{note_id}.md")
+
+    # Save
+    if action == "save":
+        content = request.form.get("content")
+        if content is None:
+            abort(400)
+        with open(note_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return redirect(url_for("show_note", category=category, note_id=note_id))
+
+    # Upload
+    if action == "upload":
+        file = request.files.get("file")
+        if not file or file.filename == "":
+            abort(400)
+        if not file.filename.endswith(".md"):
+            abort(400)
+        file.save(note_path)
+        return redirect(url_for("show_note", category=category, note_id=note_id))
+
+    # Delete
+    if action == "delete":
+        confirm_slug = request.form.get("confirm_slug")
+        if not confirm_slug:
+            abort(400)
+        if confirm_slug != note_id:
+            return "Slug eşleşmiyor", 403
+        if not os.path.exists(note_path):
+            abort(404)
+        os.remove(note_path)
+        return redirect(url_for("notes_page"))
 
     abort(400)
 
