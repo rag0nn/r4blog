@@ -232,9 +232,9 @@ def base_page():
 
 @app.route("/about")
 def about_page():
-    posts = get_post_names()
+    notes = get_note_names()
     projects = get_project_names()
-    return render_template('about.html', posts=posts, projects=projects)
+    return render_template('about.html', notes=notes, projects=projects)
 
 
 # ── Posts ──────────────────────────────────────

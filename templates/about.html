@@ -19,13 +19,13 @@
   <div style="height: 10px;"></div>
   <div class="grid-container">
     <div class="div_card grid-column chilling"><!-- left group-->
-      <h2>Posts</h2>
+      <h2>Notes</h2>
       <ul class="elements-ul">
-        {% for post in posts %}
+        {% for note in notes %}
         <li class="element-li">
-          <a href="{{ url_for('show_post', category=post.category, post_id=post.slug) }}">
-            <h4>{{ post.title }}</h4>
-            <div>{{post.date}}</div>
+          <a href="{{ url_for('show_note', category=note.category, note_id=note.slug) }}">
+            <h4>{{ note.title }}</h4>
+            <div>{{note.date}}</div>
           </a>
         </li>
         {% endfor %}
