@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Your Profile · r4blog{% endblock %}
+{% block content %}
+<section class="profile-hero">
+  <img src="{% static user.profile.avatar_path %}" alt="{{ user.username }} avatar">
+  <div><span data-i18n-en="Your profile" data-i18n-tr="Profilin">Your profile</span><h1>{{ user.username }}</h1><a href="{% url 'public_profile' username=user.username %}" data-i18n-en="View your content profile →" data-i18n-tr="İçerik profilini görüntüle →">View your content profile →</a></div>
+</section>
+<section class="profile-editor">
+  <h2 data-i18n-en="Choose an avatar" data-i18n-tr="Avatar seç">Choose an avatar</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="primary-button" type="submit" data-i18n-en="Save avatar" data-i18n-tr="Avatarı kaydet">Save avatar</button>
+  </form>
+</section>
+{% endblock %}

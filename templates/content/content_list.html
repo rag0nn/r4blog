@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ config.plural }} · r4blog{% endblock %}
+{% block content %}
+<div class="page-heading"><span></span><h1 data-i18n-en="{{ config.plural }}" data-i18n-tr="{{ config.plural_tr }}">{{ config.plural }}</h1></div>
+
+<form class="search-form" method="get" role="search">
+  <label class="sr-only" for="content-search">Search {{ config.plural|lower }}</label>
+  <input id="content-search" name="q" value="{{ query }}" placeholder="Search title, slug or Markdown body" data-placeholder-en="Search title, slug or Markdown body" data-placeholder-tr="Başlık, slug veya Markdown içeriğinde ara">
+  <button type="submit" data-i18n-en="Search" data-i18n-tr="Ara">Search</button>
+  {% if query %}<a href="{% url config.list_url %}" data-i18n-en="Clear" data-i18n-tr="Temizle">Clear</a>{% endif %}
+</form>
+
+<div class="listing-layout">
+  <section class="public-list" aria-labelledby="public-heading">
+    {% if query %}
+      <h2 id="public-heading" data-i18n-en="Search results" data-i18n-tr="Arama sonuçları">Search results</h2>
+    {% else %}
+      <h2 id="public-heading" data-i18n-en="Public {{ config.plural }}" data-i18n-tr="Herkese Açık {{ config.plural_tr }}">Public {{ config.plural }}</h2>
+    {% endif %}
+    <div class="stack-list">
+      {% for item in page_obj %}
+        <a class="list-card" href="{% url config.detail_url slug=item.slug %}">
+          <div class="list-card-copy">
+            <h3>{{ item.title }}</h3>
+            {% if item.visibility == 'private' %}<span class="visibility private" data-i18n-en="Private" data-i18n-tr="Özel">Private</span>{% endif %}
+            <time datetime="{{ item.updated_at|date:'c' }}">{{ item.updated_at|date:"M j, Y · H:i" }}</time>
+          </div>
+          <div class="card-author">
+            <img src="{% static item.owner.profile.avatar_path %}" alt="{{ item.owner.username }} avatar">
+            <span>{{ item.owner.username }}</span>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state" data-i18n-en="No matching {{ config.plural|lower }} found." data-i18n-tr="Eşleşen {{ config.plural_tr|lower }} bulunamadı.">No matching {{ config.plural|lower }} found.</div>
+      {% endfor %}
+    </div>
+    {% include "content/pagination.html" %}
+  </section>
+
+  <aside class="personal-sidebar">
+    {% if user.is_authenticated %}
+      <a class="add-button" href="{% url config.add_url %}" data-i18n-en="Add {{ config.singular }}" data-i18n-tr="{{ config.singular_tr }} Ekle">Add {{ config.singular }}</a>
+      <h2 data-i18n-en="Your {{ config.plural }}" data-i18n-tr="{{ config.plural_tr }}">Your {{ config.plural }}</h2>
+      <div class="own-list">
+        {% for item in own_items %}
+          <a href="{% url config.detail_url slug=item.slug %}">
+            <strong>{{ item.title }}</strong>
+            {% if item.visibility == 'public' %}<span class="visibility public" data-i18n-en="Public" data-i18n-tr="Herkese Açık">Public</span>{% else %}<span class="visibility private" data-i18n-en="Private" data-i18n-tr="Özel">Private</span>{% endif %}
+          </a>
+        {% empty %}
+          <p data-i18n-en="You have no {{ config.plural|lower }} yet." data-i18n-tr="Henüz {{ config.plural_tr|lower }} yok.">You have no {{ config.plural|lower }} yet.</p>
+        {% endfor %}
+      </div>
+    {% else %}
+      <a class="add-button" href="{% url 'login' %}?next={% url config.add_url %}" data-i18n-en="Login to add" data-i18n-tr="Eklemek için giriş yap">Login to add</a>
+      <div class="login-prompt" data-i18n-en="Your public and private {{ config.plural|lower }} will appear here." data-i18n-tr="Herkese açık ve özel {{ config.plural_tr|lower }} burada görünecek.">Your public and private {{ config.plural|lower }} will appear here.</div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

@@ -1,66 +1,73 @@
-<!DOCTYPE html>
-<html lang="tr">
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="white" data-language="en">
 <head>
-    <meta charset="UTF-8">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SEVCYZD862"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-SEVCYZD862');
-    </script>
-     
-    <title>{% block title %}Site{% endblock %}</title>
-
-    <!-- Global CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <!-- Sayfaya özel CSS -->
-    {% block styles %}{% endblock %}
-    <!-- Fontlar-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <!-- Semboller -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{% block title %}r4blog{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <script src="{% static 'js/theme.js' %}" defer></script>
+  <script src="{% static 'js/language.js' %}" defer></script>
+  {% block head %}{% endblock %}
 </head>
 <body>
-    <div>
-        <div class="bg-slider">
-        <div class="bg step-1"></div>
-        <div class="bg step-2"></div>
-        <div class="bg step-3"></div>
-    </div>
-    <header class="header horizontal-layout" style="justify-content: space-between;">
-        <nav class="nav">
-            <a href="/" class="nav-link">Main Page</a>
-            <a href="/notes" class="nav-link">Notes</a>
-            <a href="/posts" class="nav-link">Posts</a>
-            <a href="/projects" class="nav-link">Projects</a>
-            <a href="/about" class="nav-link">About</a>
-
+  <div class="bg-slider" aria-hidden="true">
+    <div class="theme-panel theme-white"></div>
+    <div class="theme-panel theme-reading"></div>
+    <div class="theme-panel theme-colorful"></div>
+  </div>
+  <header class="site-header">
+    <button class="mobile-menu" type="button" aria-expanded="false" aria-controls="main-navigation" data-i18n-en="Menu" data-i18n-tr="Menü">Menu</button>
+    <div class="header-content" id="main-navigation">
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="{% url 'home' %}" data-i18n-en="Home" data-i18n-tr="Ana Sayfa">Home</a>
+        <a href="{% url 'note_list' %}" data-i18n-en="Notes" data-i18n-tr="Notlar">Notes</a>
+        <a href="{% url 'post_list' %}" data-i18n-en="Posts" data-i18n-tr="Yazılar">Posts</a>
+        <a href="{% url 'project_list' %}" data-i18n-en="Projects" data-i18n-tr="Projeler">Projects</a>
+        <a href="{% url 'about' %}" data-i18n-en="About Us" data-i18n-tr="Hakkımızda">About Us</a>
+        <a href="{% url 'api_guide' %}" data-i18n-en="API Guide" data-i18n-tr="API Rehberi">API Guide</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="account-nav" aria-label="Account navigation">
+          {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" data-i18n-en="Profile" data-i18n-tr="Profil">Profile</a>
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" data-i18n-en="Logout" data-i18n-tr="Çıkış">Logout</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" data-i18n-en="Login" data-i18n-tr="Giriş">Login</a>
+            <a class="accent-link" href="{% url 'register' %}" data-i18n-en="Register" data-i18n-tr="Kayıt Ol">Register</a>
+          {% endif %}
         </nav>
-            <div>
-                <button class="color-btn" style="background-color: transparent;" onclick="setStep(0)">White</button>
-                <button class="color-btn" style="background-color: transparent;" onclick="setStep(1)">Reading</button>
-                <button class="color-btn" style="background-color: transparent;" onclick="setStep(2)">Colorful</button>     
-            </div>
-    </header>
+        <div class="theme-switcher" role="group" aria-label="Color theme">
+          <button type="button" data-theme-choice="white" data-i18n-en="White" data-i18n-tr="Beyaz">White</button>
+          <button type="button" data-theme-choice="reading" data-i18n-en="Reading" data-i18n-tr="Okuma">Reading</button>
+          <button type="button" data-theme-choice="colorful" data-i18n-en="Colorful" data-i18n-tr="Renkli">Colorful</button>
+        </div>
+        <div class="language-switcher" role="group" aria-label="Language">
+          <button type="button" data-language-choice="en">EN</button>
+          <button type="button" data-language-choice="tr">TR</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <script>
-    function setStep(step) {
-    document.querySelector(".bg-slider")
-        .style.transform = `translateX(-${step * 100}vw)`;
-    }
-    </script>
+  {% if messages %}
+    <div class="messages" aria-live="polite">
+      {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+    </div>
+  {% endif %}
 
+  <main class="page-shell">
     {% block content %}{% endblock %}
+  </main>
 
+  <footer class="site-footer" data-i18n-en="r4blog · ideas, notes and projects." data-i18n-tr="r4blog · fikirler, notlar ve projeler.">r4blog · ideas, notes and projects.</footer>
 </body>
 </html>
-
-

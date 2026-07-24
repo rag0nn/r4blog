@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login · r4blog{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1 data-i18n-en="Welcome back" data-i18n-tr="Tekrar hoş geldin">Welcome back</h1>
+  <p data-i18n-en="Login to manage your public and private content." data-i18n-tr="Herkese açık ve özel içeriklerini yönetmek için giriş yap.">Login to manage your public and private content.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="auth-field">
+      <label for="id_username" data-i18n-en="Username" data-i18n-tr="Kullanıcı adı">Username</label>
+      {{ form.username }}
+      {{ form.username.errors }}
+    </div>
+    <div class="auth-field">
+      <label for="id_password" data-i18n-en="Password" data-i18n-tr="Parola">Password</label>
+      {{ form.password }}
+      {{ form.password.errors }}
+    </div>
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    <button class="primary-button" type="submit" data-i18n-en="Login" data-i18n-tr="Giriş Yap">Login</button>
+  </form>
+  <p><a href="{% url 'password_reset' %}" data-i18n-en="Forgot your password?" data-i18n-tr="Parolanı mı unuttun?">Forgot your password?</a></p>
+  <p><span data-i18n-en="New here?" data-i18n-tr="Yeni misin?">New here?</span> <a href="{% url 'register' %}" data-i18n-en="Create an account" data-i18n-tr="Hesap oluştur">Create an account</a>.</p>
+</section>
+{% endblock %}
+

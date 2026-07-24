@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} {{ config.singular }} · r4blog{% endblock %}
+{% block content %}
+<div class="page-heading"><span></span><h1 data-i18n-en="{{ action }} {{ config.singular }}" data-i18n-tr="{{ config.singular_tr }} {% if action == 'Add' %}Ekle{% else %}Güncelle{% endif %}">{{ action }} {{ config.singular }}</h1></div>
+<form class="editor-form" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+  <p class="form-help"><span data-i18n-en="The first non-empty line must be a title like" data-i18n-tr="İlk dolu satır şu biçimde bir başlık olmalıdır:">The first non-empty line must be a title like</span> <code># My title</code>. <span data-i18n-en="Choose one input method." data-i18n-tr="Tek bir giriş yöntemi seç.">Choose one input method.</span></p>
+
+  <div class="editor-tabs" role="tablist" aria-label="Markdown input method">
+    <button type="button" role="tab" data-editor-tab="manual" aria-selected="true" data-i18n-en="Write Markdown" data-i18n-tr="Markdown Yaz">Write Markdown</button>
+    <button type="button" role="tab" data-editor-tab="file" aria-selected="false" data-i18n-en="Upload .md" data-i18n-tr=".md Yükle">Upload .md</button>
+  </div>
+  <div class="editor-panel" data-editor-panel="manual">
+    <label for="id_manual_content" data-i18n-en="Write Markdown" data-i18n-tr="Markdown Yaz">Write Markdown</label>
+    {{ form.manual_content }}
+    {{ form.manual_content.errors }}
+  </div>
+  <div class="editor-panel" data-editor-panel="file" hidden>
+    <label for="id_markdown_file" data-i18n-en="Upload a UTF-8 .md file" data-i18n-tr="UTF-8 .md dosyası yükle">Upload a UTF-8 .md file</label>
+    {{ form.markdown_file }}
+    {{ form.markdown_file.errors }}
+  </div>
+  <div class="field-row">
+    <label for="id_visibility" data-i18n-en="Visibility" data-i18n-tr="Görünürlük">Visibility</label>
+    {{ form.visibility }}
+    {{ form.visibility.errors }}
+  </div>
+  <button class="primary-button" type="submit" data-i18n-en="{{ action }} {{ config.singular }}" data-i18n-tr="{{ config.singular_tr }} {% if action == 'Add' %}Ekle{% else %}Güncelle{% endif %}">{{ action }} {{ config.singular }}</button>
+</form>
+<script>
+const manualInput = document.getElementById('id_manual_content');
+const fileInput = document.getElementById('id_markdown_file');
+function activateEditor(selected) {
+  document.querySelectorAll('[data-editor-tab]').forEach((tab) => tab.setAttribute('aria-selected', tab.dataset.editorTab === selected ? 'true' : 'false'));
+  document.querySelectorAll('[data-editor-panel]').forEach((panel) => { panel.hidden = panel.dataset.editorPanel !== selected; });
+  manualInput.disabled = selected !== 'manual';
+  fileInput.disabled = selected !== 'file';
+}
+document.querySelectorAll('[data-editor-tab]').forEach((button) => {
+  button.addEventListener('click', () => activateEditor(button.dataset.editorTab));
+});
+activateEditor('manual');
+</script>
+{% endblock %}

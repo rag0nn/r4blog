@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ item.title }} · r4blog{% endblock %}
+{% block content %}
+<section class="confirm-card">
+  <span class="danger-label" data-i18n-en="Delete {{ config.singular }}" data-i18n-tr="{{ config.singular_tr }} Sil">Delete {{ config.singular }}</span>
+  <h1>{{ item.title }}</h1>
+  <p data-i18n-en="This removes the content from the website. Its append-only integrity records will remain." data-i18n-tr="Bu işlem içeriği web sitesinden kaldırır. Değiştirilemez bütünlük kayıtları korunur.">This removes the content from the website. Its append-only integrity records will remain.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="danger-button" type="submit" data-i18n-en="Yes, delete it" data-i18n-tr="Evet, sil">Yes, delete it</button>
+    <a href="{% url config.detail_url slug=item.slug %}" data-i18n-en="Cancel" data-i18n-tr="Vazgeç">Cancel</a>
+  </form>
+</section>
+{% endblock %}

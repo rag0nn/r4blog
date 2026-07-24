@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ profile_user.username }} · r4blog{% endblock %}
+{% block content %}
+<section class="profile-hero">
+  <img src="{% static profile_user.profile.avatar_path %}" alt="{{ profile_user.username }} avatar">
+  <div><span data-i18n-en="Writer profile" data-i18n-tr="Yazar profili">Writer profile</span><h1>{{ profile_user.username }}</h1>{% if own_profile %}<a href="{% url 'profile' %}" data-i18n-en="Change avatar →" data-i18n-tr="Avatarı değiştir →">Change avatar →</a>{% endif %}</div>
+</section>
+
+<div class="profile-groups">
+  {% for group in groups %}
+    <section class="profile-group">
+      <h2 data-i18n-en="Public {{ group.config.plural }}" data-i18n-tr="Herkese Açık {{ group.config.plural_tr }}">Public {{ group.config.plural }}</h2>
+      {% for item in group.public_items %}
+        <a href="{% url group.config.detail_url slug=item.slug %}">{{ item.title }}</a>
+      {% empty %}<p data-i18n-en="No public {{ group.config.plural|lower }}." data-i18n-tr="Herkese açık {{ group.config.plural_tr|lower }} yok.">No public {{ group.config.plural|lower }}.</p>{% endfor %}
+      {% if group.private_items %}
+        <h3 data-i18n-en="Private {{ group.config.plural }}" data-i18n-tr="Özel {{ group.config.plural_tr }}">Private {{ group.config.plural }}</h3>
+        {% for item in group.private_items %}<a href="{% url group.config.detail_url slug=item.slug %}">{{ item.title }} <span data-i18n-en="Private" data-i18n-tr="Özel">Private</span></a>{% endfor %}
+      {% endif %}
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ item.title }} · r4blog{% endblock %}
+{% block content %}
+<header class="detail-header">
+  <div>
+    <h1>{{ item.title }}</h1>
+    {% if item.visibility == 'public' %}<span class="visibility public detail-visibility" data-i18n-en="Public" data-i18n-tr="Herkese Açık">Public</span>{% else %}<span class="visibility private detail-visibility" data-i18n-en="Private" data-i18n-tr="Özel">Private</span>{% endif %}
+  </div>
+  <div class="detail-actions">
+    <a class="icon-action" href="{% url config.download_url slug=item.slug %}" aria-label="Download Markdown" data-aria-en="Download Markdown" data-aria-tr="Markdown indir">
+      <i class="fa-solid fa-circle-arrow-down" aria-hidden="true"></i>
+    </a>
+    {% if user == item.owner %}
+      <a class="icon-action" href="{% url config.update_url slug=item.slug %}" aria-label="Update content" data-aria-en="Update content" data-aria-tr="İçeriği güncelle">
+        <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+      </a>
+      <a class="danger-link" href="{% url config.delete_url slug=item.slug %}" data-i18n-en="Delete" data-i18n-tr="Sil">Delete</a>
+    {% endif %}
+  </div>
+</header>
+
+<article class="markdown-body">{{ rendered_content }}</article>
+
+<footer class="content-footer">
+  <a class="author-card" href="{% url 'public_profile' username=item.owner.username %}">
+    <img src="{% static item.owner.profile.avatar_path %}" alt="{{ item.owner.username }} avatar">
+    <span><span data-i18n-en="Written by" data-i18n-tr="Yazan">Written by</span> <strong>{{ item.owner.username }}</strong></span>
+  </a>
+  <div class="date-meta">
+    <span data-i18n-en="Created {{ item.created_at|date:'M j, Y · H:i' }}" data-i18n-tr="Oluşturuldu {{ item.created_at|date:'d.m.Y · H:i' }}">Created {{ item.created_at|date:"M j, Y · H:i" }}</span>
+    <span data-i18n-en="Updated {{ item.updated_at|date:'M j, Y · H:i' }}" data-i18n-tr="Güncellendi {{ item.updated_at|date:'d.m.Y · H:i' }}">Updated {{ item.updated_at|date:"M j, Y · H:i" }}</span>
+    <span>#{{ item.slug }}</span>
+  </div>
+</footer>
+{% endblock %}

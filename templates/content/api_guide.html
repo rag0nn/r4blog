@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}API Guide · r4blog{% endblock %}
+{% block content %}
+<div class="page-heading"><span></span><h1 data-i18n-en="API Guide" data-i18n-tr="API Rehberi">API Guide</h1></div>
+
+<article class="guide markdown-body" data-language-content="en">
+  <p>The v1 API intentionally provides only token authentication, create, update and Markdown download operations. <code>[root]</code> is a literal documentation placeholder for the site's root URL, including scheme, host and optional port. Replace it, credentials and slugs before running an example.</p>
+
+  <h2>Get and revoke a token</h2>
+  <pre><code>curl -X POST [root]/api/v1/auth/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"your-password"}'</code></pre>
+  <p>Authenticated requests use <code>Authorization: Token YOUR_TOKEN</code>. Revoke the active token with:</p>
+  <pre><code>curl -X POST [root]/api/v1/auth/revoke/ \
+  -H "Authorization: Token YOUR_TOKEN"</code></pre>
+
+  <h2>Create content</h2>
+  <p>Post, Note and Project are deliberately separate resources. The first non-empty Markdown line must be one H1. The server derives title and slug from that heading.</p>
+  <table>
+    <thead><tr><th>Resource</th><th>Create</th><th>Update</th><th>Download</th></tr></thead>
+    <tbody>
+      <tr><td>Post</td><td><code>POST /api/v1/posts/</code></td><td><code>PUT|PATCH /api/v1/posts/&lt;slug&gt;/</code></td><td><code>GET /api/v1/posts/&lt;slug&gt;/download/</code></td></tr>
+      <tr><td>Note</td><td><code>POST /api/v1/notes/</code></td><td><code>PUT|PATCH /api/v1/notes/&lt;slug&gt;/</code></td><td><code>GET /api/v1/notes/&lt;slug&gt;/download/</code></td></tr>
+      <tr><td>Project</td><td><code>POST /api/v1/projects/</code></td><td><code>PUT|PATCH /api/v1/projects/&lt;slug&gt;/</code></td><td><code>GET /api/v1/projects/&lt;slug&gt;/download/</code></td></tr>
+    </tbody>
+  </table>
+  <pre><code>curl -X POST [root]/api/v1/posts/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"markdown":"# First post\n\nHello world.","visibility":"public"}'</code></pre>
+  <p>A successful create returns:</p>
+  <pre><code>{
+  "title": "First post",
+  "slug": "first-post",
+  "visibility": "public",
+  "created_at": "2026-07-19T12:00:00Z",
+  "updated_at": "2026-07-19T12:00:00Z"
+}</code></pre>
+  <p>You can upload a UTF-8 Markdown file instead of sending a JSON Markdown string:</p>
+  <pre><code>curl -X POST [root]/api/v1/notes/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -F "file=@my-note.md" -F "visibility=private"</code></pre>
+
+  <h2>Update owned content</h2>
+  <pre><code>curl -X PATCH [root]/api/v1/posts/first-post/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"markdown":"# Renamed post\n\nUpdated body.","visibility":"private"}'</code></pre>
+  <p>An H1 change also changes the slug. Slug collisions receive <code>-2</code>, <code>-3</code> and so on. Only the owner can update content.</p>
+
+  <h2>Download Markdown</h2>
+  <pre><code>curl -OJ [root]/api/v1/projects/my-project/download/</code></pre>
+  <p>Public Markdown can be downloaded anonymously. Private Markdown requires the owner or a staff/admin token. List, JSON detail, API delete and API revision endpoints do not exist.</p>
+
+  <h2>Validation and responses</h2>
+  <p>Files must be UTF-8 <code>.md</code> files no larger than 2 MB. Send either <code>markdown</code> or <code>file</code>, never both. Visibility is <code>public</code> or <code>private</code>. Successful creates return <code>201</code>; updates and downloads return <code>200</code>. Invalid input returns <code>400</code>, missing authentication <code>401</code>, disallowed ownership <code>403</code>, and unavailable content <code>404</code>.</p>
+  <p>Representative error bodies:</p>
+  <pre><code>{"content":["The first non-empty line must be a Markdown H1 such as '# Title'."]}
+{"detail":"Authentication credentials were not provided."}
+{"detail":"Only the owner can update this content."}
+{"detail":"No Post matches the given query."}</code></pre>
+
+  <h2>Integrity scope</h2>
+  <p>Every create and update appends an encrypted snapshot to a SHA-256 hash chain with its actor and timestamp. This detects application-level history changes; it is not a blockchain, independent notary or trusted external timestamp.</p>
+</article>
+
+<article class="guide markdown-body" data-language-content="tr" hidden>
+  <p>v1 API bilinçli olarak yalnızca token ile kimlik doğrulama, içerik oluşturma, güncelleme ve Markdown indirme işlemlerini sunar. <code>[root]</code>, dokümanda sitenin protokol, host ve varsa port bilgisini içeren kök adresi yerine kullanılan düz metin placeholder'dır. Örneği çalıştırmadan önce bu ifadeyi, kullanıcı bilgilerini ve slug değerlerini kendi bilgilerinle değiştir.</p>
+
+  <h2>Token alma ve iptal etme</h2>
+  <pre><code>curl -X POST [root]/api/v1/auth/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alice","password":"your-password"}'</code></pre>
+  <p>Kimliği doğrulanmış isteklerde <code>Authorization: Token YOUR_TOKEN</code> başlığı kullanılır. Aktif token'ı şu istekle iptal edebilirsin:</p>
+  <pre><code>curl -X POST [root]/api/v1/auth/revoke/ \
+  -H "Authorization: Token YOUR_TOKEN"</code></pre>
+
+  <h2>İçerik oluşturma</h2>
+  <p>Post, Note ve Project bilinçli olarak ayrı kaynaklardır. Markdown içeriğinin ilk dolu satırı tek bir H1 olmalıdır. Sunucu başlığı ve slug değerini bu H1 satırından üretir.</p>
+  <table>
+    <thead><tr><th>Kaynak</th><th>Oluşturma</th><th>Güncelleme</th><th>İndirme</th></tr></thead>
+    <tbody>
+      <tr><td>Post</td><td><code>POST /api/v1/posts/</code></td><td><code>PUT|PATCH /api/v1/posts/&lt;slug&gt;/</code></td><td><code>GET /api/v1/posts/&lt;slug&gt;/download/</code></td></tr>
+      <tr><td>Note</td><td><code>POST /api/v1/notes/</code></td><td><code>PUT|PATCH /api/v1/notes/&lt;slug&gt;/</code></td><td><code>GET /api/v1/notes/&lt;slug&gt;/download/</code></td></tr>
+      <tr><td>Project</td><td><code>POST /api/v1/projects/</code></td><td><code>PUT|PATCH /api/v1/projects/&lt;slug&gt;/</code></td><td><code>GET /api/v1/projects/&lt;slug&gt;/download/</code></td></tr>
+    </tbody>
+  </table>
+  <pre><code>curl -X POST [root]/api/v1/posts/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"markdown":"# İlk yazı\n\nMerhaba dünya.","visibility":"public"}'</code></pre>
+  <p>Başarılı bir oluşturma isteği şu yapıda cevap döndürür:</p>
+  <pre><code>{
+  "title": "İlk yazı",
+  "slug": "ilk-yazi",
+  "visibility": "public",
+  "created_at": "2026-07-19T12:00:00Z",
+  "updated_at": "2026-07-19T12:00:00Z"
+}</code></pre>
+  <p>JSON içinde Markdown göndermek yerine UTF-8 bir Markdown dosyası da yükleyebilirsin:</p>
+  <pre><code>curl -X POST [root]/api/v1/notes/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -F "file=@notum.md" -F "visibility=private"</code></pre>
+
+  <h2>Kendi içeriğini güncelleme</h2>
+  <pre><code>curl -X PATCH [root]/api/v1/posts/ilk-yazi/ \
+  -H "Authorization: Token YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"markdown":"# Yeniden adlandırılan yazı\n\nGüncel içerik.","visibility":"private"}'</code></pre>
+  <p>H1 değişirse slug da değişir. Slug çakışmalarında <code>-2</code>, <code>-3</code> gibi ekler kullanılır. Bir içeriği yalnızca sahibi güncelleyebilir.</p>
+
+  <h2>Markdown indirme</h2>
+  <pre><code>curl -OJ [root]/api/v1/projects/projem/download/</code></pre>
+  <p>Herkese açık Markdown içerikleri anonim olarak indirilebilir. Özel içerik için içeriğin sahibi veya staff/admin token'ı gerekir. API'de listeleme, JSON detay, silme ve revision uçları bulunmaz.</p>
+
+  <h2>Doğrulama ve cevaplar</h2>
+  <p>Dosyalar UTF-8 kodlu, <code>.md</code> uzantılı ve en fazla 2 MB olmalıdır. Aynı istekte yalnızca <code>markdown</code> veya <code>file</code> gönder; ikisini birlikte gönderme. Görünürlük değeri <code>public</code> ya da <code>private</code> olmalıdır. Başarılı oluşturma <code>201</code>, güncelleme ve indirme <code>200</code> döndürür. Geçersiz veri <code>400</code>, eksik kimlik doğrulama <code>401</code>, yetkisiz sahiplik işlemi <code>403</code> ve bulunamayan içerik <code>404</code> döndürür.</p>
+  <p>API'nin döndürebileceği örnek hata gövdeleri:</p>
+  <pre><code>{"content":["The first non-empty line must be a Markdown H1 such as '# Title'."]}
+{"detail":"Authentication credentials were not provided."}
+{"detail":"Only the owner can update this content."}
+{"detail":"No Post matches the given query."}</code></pre>
+  <p>Hata metinleri şu anda backend tarafından İngilizce döndürülür; HTTP durum kodları ve alan adları her iki dilde de aynıdır.</p>
+
+  <h2>Bütünlük mekanizmasının kapsamı</h2>
+  <p>Her oluşturma ve güncelleme işlemi; işlemi yapan kullanıcı ve zaman bilgisiyle birlikte şifrelenmiş bir snapshot'ı SHA-256 hash zincirine ekler. Bu mekanizma uygulama seviyesindeki geçmiş değişikliklerini tespit etmeye yardımcı olur; blokzincir, bağımsız noter veya güvenilir harici zaman damgası değildir.</p>
+</article>
+{% endblock %}

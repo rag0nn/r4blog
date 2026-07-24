@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Register · r4blog{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1 data-i18n-en="Create an account" data-i18n-tr="Hesap oluştur">Create an account</h1>
+  <p data-i18n-en="Register to publish Markdown or keep private writing." data-i18n-tr="Markdown yayınlamak veya özel yazılar tutmak için kayıt ol.">Register to publish Markdown or keep private writing.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+
+    <div class="auth-field">
+      <label for="id_username" data-i18n-en="Username" data-i18n-tr="Kullanıcı adı">Username</label>
+      {{ form.username }}
+      {{ form.username.errors }}
+      <p class="field-help" data-i18n-en="Required. At most 150 characters; letters, digits and @/./+/-/_ only." data-i18n-tr="Zorunlu. En fazla 150 karakter; yalnızca harf, rakam ve @/./+/-/_ kullanılabilir.">Required. At most 150 characters; letters, digits and @/./+/-/_ only.</p>
+    </div>
+
+    <div class="auth-field">
+      <label for="id_email" data-i18n-en="Email address" data-i18n-tr="E-posta adresi">Email address</label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+
+    <div class="auth-field">
+      <label for="id_password1" data-i18n-en="Password" data-i18n-tr="Parola">Password</label>
+      {{ form.password1 }}
+      {{ form.password1.errors }}
+      <ul class="field-help" data-language-content="en">
+        <li>Your password cannot be too similar to your personal information.</li>
+        <li>It must contain at least 8 characters.</li>
+        <li>It cannot be a commonly used password or entirely numeric.</li>
+      </ul>
+      <ul class="field-help" data-language-content="tr" hidden>
+        <li>Parolan kişisel bilgilerine çok benzeyemez.</li>
+        <li>En az 8 karakter içermelidir.</li>
+        <li>Yaygın kullanılan veya tamamen sayısal bir parola olamaz.</li>
+      </ul>
+    </div>
+
+    <div class="auth-field">
+      <label for="id_password2" data-i18n-en="Password confirmation" data-i18n-tr="Parola doğrulama">Password confirmation</label>
+      {{ form.password2 }}
+      {{ form.password2.errors }}
+      <p class="field-help" data-i18n-en="Enter the same password again for verification." data-i18n-tr="Doğrulama için aynı parolayı tekrar gir.">Enter the same password again for verification.</p>
+    </div>
+
+    <button class="primary-button" type="submit" data-i18n-en="Register" data-i18n-tr="Kayıt Ol">Register</button>
+  </form>
+  <p><span data-i18n-en="Already registered?" data-i18n-tr="Zaten kayıtlı mısın?">Already registered?</span> <a href="{% url 'login' %}" data-i18n-en="Login" data-i18n-tr="Giriş yap">Login</a>.</p>
+</section>
+{% endblock %}
+

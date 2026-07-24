@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home · r4blog{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <div class="eyebrow" data-i18n-en="A shared Markdown space" data-i18n-tr="Paylaşılan bir Markdown alanı">A shared Markdown space</div>
+    <h1 data-i18n-en="Ideas deserve a clear place." data-i18n-tr="Fikirler açık bir alanı hak eder.">Ideas deserve a clear place.</h1>
+    <p data-i18n-en="Read the latest public writing or sign in to keep private notes of your own. All data is stored in encrypted form" data-i18n-tr="En yeni herkese açık yazıları oku veya kendi özel notlarını tutmak için giriş yap.  Veriler şifreli şekilde saklanmaktadır">Read the latest public writing or sign in to keep private notes of your own.</p>
+  </div>
+  <div class="user-count"><strong>{{ user_count }}</strong><span data-i18n-en="registered users" data-i18n-tr="kayıtlı kullanıcı">registered users</span></div>
+</section>
+
+<section class="home-grid" aria-label="Latest public content">
+  {% for card in cards %}
+    {% if card.item %}
+      <a class="content-card floating-card" href="{% url card.config.detail_url slug=card.item.slug %}">
+        <span class="card-kicker" data-i18n-en="Latest {{ card.config.singular }}" data-i18n-tr="En Yeni {{ card.config.singular_tr }}">Latest {{ card.config.singular }}</span>
+        <h2>{{ card.item.title }}</h2>
+        <div class="author-line">
+          <img src="{% static card.item.owner.profile.avatar_path %}" alt="{{ card.item.owner.username }} avatar">
+          <span>{{ card.item.owner.username }}</span>
+          <time datetime="{{ card.item.updated_at|date:'c' }}">{{ card.item.updated_at|date:"M j, Y" }}</time>
+        </div>
+        <p class="markdown-preview">{{ card.preview|linebreaksbr }}</p>
+        <span class="read-link" data-i18n-en="Read {{ card.config.singular|lower }} →" data-i18n-tr="{{ card.config.singular_tr }} oku →">Read {{ card.config.singular|lower }} →</span>
+      </a>
+    {% else %}
+      <div class="content-card empty-card">
+        <span class="card-kicker" data-i18n-en="Latest {{ card.config.singular }}" data-i18n-tr="En Yeni {{ card.config.singular_tr }}">Latest {{ card.config.singular }}</span>
+        <h2 data-i18n-en="No public {{ card.config.plural|lower }} yet." data-i18n-tr="Henüz herkese açık {{ card.config.plural_tr|lower }} yok.">No public {{ card.config.plural|lower }} yet.</h2>
+        {% if user.is_authenticated %}<a href="{% url card.config.add_url %}" data-i18n-en="Add the first one" data-i18n-tr="İlkini ekle">Add the first one</a>{% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</section>
+{% endblock %}
